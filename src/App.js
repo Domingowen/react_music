@@ -1,28 +1,36 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
-
+import './common/reset.css';
+import {hot} from 'react-hot-loader';
+import Header from './components/header/index';
+import {BrowserRouter as Router} from 'react-router-dom';
+import {StyleSheet, css} from 'aphrodite';
+import RouteList from './router';
+import './assets/iconfont.css';
+import PlayerAudio from './components/player/AudioPlayer'
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
+    constructor (props) {
+        super();
+    }
+    render() {
+        return (
+            <Router>
+                <div className="App">
+                    <PlayerAudio/>
+                    <Header/>
+                    <div className={css(styles.container)}>
+                        <RouteList/>
+                    </div>
+                </div>
+            </Router>
+        );
+    }
 
-export default App;
+    componentDidMount () {}
+}
+const styles = StyleSheet.create({
+    container: {
+        minWidth: '1000px',
+    }
+});
+export default hot(module)(App)
