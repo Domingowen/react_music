@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
         minWidth: '1000px',
         backgroundColor: '#fff',
         height: '90px',
+        position: 'relative',
+        zIndex: 10,
+        overflow: 'hidden'
     },
     header: {
         width: '1000px',

@@ -27,6 +27,7 @@ class AudioPlayer extends Component {
         // this.player.play();
     }
     componentDidMount () {
+        this.player.loop = false;
         // this.player.paused
     }
     // shouldComponentUpdate(nextProps, nextState) {
@@ -75,6 +76,7 @@ class AudioPlayer extends Component {
         })
     }
     playEnd (e) {
+        console.log(e);
         console.log('播放结束');
     }
     playSeeked (e) {}

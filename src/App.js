@@ -7,7 +7,8 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import {StyleSheet, css} from 'aphrodite';
 import RouteList from './router';
 import './assets/iconfont.css';
-import PlayerAudio from './components/player/AudioPlayer'
+import PlayerAudio from './components/player/AudioPlayer';
+
 class App extends Component {
     constructor (props) {
         super();

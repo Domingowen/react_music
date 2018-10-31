@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 import {player, audio_player, audio_control} from '../../redux/actions';
 import musicPic from '../../assets/music_bg.png';
 import musicPic2 from '../../assets/music_bg2.png';
+import Progress from 'antd/lib/progress';
+import 'antd/lib/progress/style/index.css';
 class Player extends Component{
     constructor(props) {
         super(props);
@@ -17,7 +19,8 @@ class Player extends Component{
             singTitle: null,
             playList: [],
             playIndex: 0,
-            singId: ''
+            singId: '',
+            progress: 0,
         }
     }
     play () {
@@ -63,6 +66,9 @@ class Player extends Component{
             });
         }
     }
+    playListSing (item) {
+        this.props.changePlayer(item);
+    }
     // componentWillReceiveProps (nextProps, nextState) {
     //     console.log(nextProps);
     //     console.log(nextState);
@@ -79,6 +85,7 @@ class Player extends Component{
         })
     }
     componentDidUpdate (prevProps, prevState){
+        // this.playerProgress();
         console.log(prevState);
         console.log(prevProps);
         if (prevProps.playerData.control.isPlay !== this.state.isPlay) {
@@ -120,7 +127,25 @@ class Player extends Component{
         }
         return null;
     }
+    playerProgress() {
+        // console.log(this.state.currentTime);
+        // console.log(this.state.durationTime);
+        // let currentTime = e.currentTime;
+        // let progress = (e.currentTime / this.state.realityTime) * 100;
+        // let time = this.timeFormat(currentTime);
+        // console.log(progress);
+        // console.log(currentTime);
+        // console.log(this.state.realityTime);
+        // this.setState({
+        //     currentTime: time,
+        //     playerProgress: progress,
+        // })
 
+        // console.log(Math.round(progress));
+        // this.setState({
+        //     progress: Math.round(progress)
+        // })
+    }
     timeFormat(time) {
         let hour = parseInt(time / 3600);
         let min = parseInt((time / 60) % 60);
@@ -142,27 +167,47 @@ class Player extends Component{
     render () {
         let currentTime = this.timeFormat(this.state.currentTime);
         let durationTime = this.timeFormat(this.state.durationTime);
+        let progress = Math.round((this.state.currentTime / this.state.durationTime) * 100);
         return (
             <div className={css(styles.container)}>
-                <div className={css(styles.singImg)}>
-                    <img className={css(styles.img)} src={this.state.singPic} alt=""/>
+                <div className={css(styles.container_left)}>
+                    <div className={css(styles.container_title)}>播放列表</div>
+                    <div className={css(styles.container_list)}>
+                        <span className={css(styles.list_sing)}>歌曲</span>
+                        <span className={css(styles.list_singer)}>歌手</span>
+                        <span className={css(styles.list_player)}>操作</span>
+                    </div>
+                    <ul>
+                        {this.state.playList.map(val => {
+                            return <li className={css(styles.player_list)}>
+                                <span className={css(styles.list_sing)}>{val.singTitle}</span>
+                                <span className={css(styles.list_singer)}>{val.singAuthor}</span>
+                                <span className={css(styles.list_player)} onClick={this.playListSing.bind(this, val)}>播放</span>
+                            </li>
+                        })}
+                    </ul>
                 </div>
-                <div className={css(styles.singAuthor)}>
-                    <span>{this.state.singTitle}</span>
-                    <span style={{padding: '0 10px'}}>——</span>
-                    <span>{this.state.singAuthor}</span>
-                </div>
-                <div className={css(styles.singLrc)}>
-                    歌词即将上线❤️
-                </div>
-                <div className={css(styles.singTip)}>
-                    音乐解析需要几秒时间，然后就会自动播放啦~
+                <div className={css(styles.container_right)}>
+                    <div className={css(styles.singImg)}>
+                        <img className={css(styles.img)} src={this.state.singPic} alt=""/>
+                    </div>
+                    <div className={css(styles.singAuthor)}>
+                        <span>{this.state.singTitle}</span>
+                        <span style={{padding: '0 10px'}}>——</span>
+                        <span>{this.state.singAuthor}</span>
+                    </div>
+                    <div className={css(styles.singLrc)}>
+                        歌词即将上线❤️
+                    </div>
+                    <div className={css(styles.singTip)}>
+                        音乐解析需要几秒时间，然后就会自动播放啦~
+                    </div>
                 </div>
                 <div className={css(styles.player)}>
                     <div className={css(styles.playerProgress)}>
                         <div className={css(styles.time)}>{currentTime}</div>
                         <div className={css(styles.singRange)}>
-                            <input type="range" className={css(styles.range)}/>
+                            <Progress strokeWidth={5}  percent={progress} showInfo={false} />
                         </div>
                         <div className={css(styles.time)}>{durationTime}</div>
                     </div>
@@ -192,10 +237,59 @@ export default connect(mapStateToProps, mapDispatchToProps)(Player)
 const styles = StyleSheet.create({
     container: {
         width: '1000px',
-        margin: '0 auto'
+        margin: '0 auto',
+        display: 'flex',
+
+    },
+    container_left: {
+        width: '490px',
+        height: '450px',
+        marginTop: '10px',
+        paddingLeft: '10px',
+        overflow: 'scroll'
+    },
+    container_right: {
+        width: '500px',
+        height: '450px',
+        // borderLeft: '1px solid rgba(255,255,255, 0.4)'
+    },
+    container_title: {
+        display: 'flex',
+        height: '30px',
+        alignItems: 'center',
+        position: 'sticky',
+        top: '0',
+        backgroundColor: '#f1f1f1',
+        justifyContent: 'center',
+    },
+    container_list: {
+        display: 'flex',
+        height: '40px',
+        alignItems: 'center',
+        position: 'sticky',
+        top: '30px',
+        backgroundColor: '#f1f1f1'
+        // position: '-webkit-sticky',
+    },
+    player_list: {
+        display: 'flex',
+        alignItems: 'center',
+        // paddingBottom: '10px',
+        height: '50px',
+        // borderBottom: '1px solid rgba(255,255,255, 0.4)'
+    },
+    list_sing: {
+        width: '200px',
+    },
+    list_singer: {
+        width: '200px'
+    },
+    list_player: {
+        width: '100px',
+        cursor: 'pointer'
     },
     singImg: {
-        width: '1000px',
+        // width: '500px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -220,7 +314,7 @@ const styles = StyleSheet.create({
         height: '200px'
     },
     player: {
-        position: 'absolute',
+        position: 'fixed',
         bottom: '40px',
         left: 0,
         right: 0,
