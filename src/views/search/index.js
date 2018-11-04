@@ -4,6 +4,10 @@ import axios from 'axios';
 import {connect} from 'react-redux';
 import {add_player, player, audio_player, audio_control} from '../../redux/actions';
 import _ from 'lodash';
+import Spin from 'antd/lib/spin';
+import Alert from 'antd/lib/alert';
+import 'antd/lib/spin/style/index.css';
+import 'antd/lib/alert/style/index.css';
 class Search extends Component{
     constructor(props) {
         super(props);
@@ -13,6 +17,7 @@ class Search extends Component{
             filter: 'name',
             type: 'qq',
             page: 1,
+            isLoading: false,
         }
     }
     searchText (e) {
@@ -40,13 +45,31 @@ class Search extends Component{
         // console.log(_.findIndex(this.props.playerList, {singId: item.songid}));
         if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
             this.props.addPlayer(items);
-            this.props.player(items);
         }
+        this.props.player(items);
         this.props.addAudio(items);
         this.props.changeAudioControl({
             isPlayer: true,
             playIndex: 0,
         });
+        let searchList = this.state.searchList.map((val, index) => {
+            if (val.songid === item.songid) {
+                console.log(val);
+                return Object.assign(val, {
+                    isPlay: true
+                })
+            } else {
+                return Object.assign(val, {
+                    isPlay: false
+                })
+            }
+        });
+        // console.log(searchList);
+        // alert('音乐准备播放');
+        console.log(this.props);
+        this.setState({
+            searchList: searchList
+        })
         // console.log(this.props.playerList);
     }
     getData () {
@@ -60,17 +83,28 @@ class Search extends Component{
                 page: this.state.page
             }
         }).then((res) => {
-            console.log(res);
+            // console.log(res);
+            res.data.data.data.map((val, index) => {
+                return Object.assign(val, {
+                    isPlay: false
+                })
+            });
             this.setState({
                 searchList: [...this.state.searchList, ...res.data.data.data],
+                isLoading: false,
             });
+            console.log(this.state.searchList);
         }).catch((res) => {
             console.log(res);
+            this.setState({
+                isLoading: false,
+            })
         })
     }
     getMore () {
         this.setState({
-            page: this.state.page + 1
+            page: this.state.page + 1,
+            isLoading: true,
         }, () => {
             this.getData();
         })
@@ -79,10 +113,13 @@ class Search extends Component{
         if(this.state.text && this.state.text.length > 0) {
            this.setState({
                searchList: [],
-               page: 1
+               page: 1,
+               isLoading: true,
            }, () => {
                this.getData();
            })
+        } else {
+            alert('请输入歌名或者歌手')
         }
     }
     enterBtn(e) {
@@ -94,6 +131,7 @@ class Search extends Component{
     render () {
         return (
             <div className={css(styles.container)}>
+                {/*<Alert message={'请输入歌名或者歌手'} type="warning"/>*/}
                 <div className={css(styles.search)}>
                     <div className={css(styles.searchInput)}>
                         <input type="text" className={css(styles.input)} placeholder={'请输入歌手或歌名'} onChange={this.searchText.bind(this)} onKeyDown={this.enterBtn.bind(this)}/>
@@ -101,6 +139,9 @@ class Search extends Component{
                     </div>
                 </div>
                 <div className={css(styles.list)}>
+                    {
+                        this.state.isLoading ?  <Spin size="large" className={css(styles.loading)} /> : null
+                    }
                     {this.state.searchList.length > 0 ?
                         <div className={css(styles.list_title)}>
                             <span className={css(styles.title_song)}>歌曲</span>
@@ -117,11 +158,16 @@ class Search extends Component{
                             <span className={css(styles.item_song)}>{val.title}</span>
                             <span className={css(styles.item_singer)}>{val.author}</span>
                             <img className={css(styles.item_album)} src={val.pic} alt=""/>
-                            <span className={css(styles.item_play) + ' ' + 'iconfont icon-bofang'}></span>
+                            {val.isPlay ?
+                                <span className={css(styles.item_play)+ ' ' + 'iconfont icon-zanting'}></span>
+                                :
+                                <span className={css(styles.item_play)+ ' ' + 'iconfont icon-bofang'}></span>
+                            }
                         </div>
                     })}
                     {this.state.searchList.length > 0 ? <span className={css(styles.getmore)} onClick={this.getMore.bind(this)}>加载更多</span>: null}
                 </div>
+
             </div>
         )
     }
@@ -138,15 +184,26 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(Search)
 const styles = StyleSheet.create({
     container: {
-        background: 'linear-gradient(45deg, blue, red)',
-        height: '100px',
+        // height: '100px',
     },
-    search: {
+    loading: {
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        margin: '0 auto',
-        width: '1000px',
+        backgroundColor: 'rgba(000,000,000,0.2)'
+    },
+    search: {
+        background: 'linear-gradient(45deg, blue, red)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // margin: '0 auto',
+        // width: '1000px',
         height: '100px',
     },
     searchInput: {
@@ -173,6 +230,8 @@ const styles = StyleSheet.create({
     list: {
         width: '1000px',
         margin: '0 auto',
+        position: 'relative',
+        paddingLeft: '20px',
     },
     list_title: {
         display: 'flex',
@@ -236,5 +295,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: '20px',
+        position: 'relative',
     }
 });
