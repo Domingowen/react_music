@@ -4,8 +4,10 @@ import {connect} from 'react-redux';
 import {player, audio_player, audio_control} from '../../redux/actions';
 import musicPic from '../../assets/music_bg.png';
 import musicPic2 from '../../assets/music_bg2.png';
+import musicPic3 from '../../assets/music_bg3.png';
 import Progress from 'antd/lib/progress';
 import 'antd/lib/progress/style/index.css';
+import moment from 'moment';
 class Player extends Component{
     constructor(props) {
         super(props);
@@ -13,14 +15,15 @@ class Player extends Component{
             isPlay: false,
             currentTime: 0,
             durationTime: 0,
-            singPic: musicPic,
-            singLrc: null,
+            singPic: musicPic3,
+            singLrc: [],
             singAuthor: null,
             singTitle: null,
             playList: [],
             playIndex: 0,
             singId: '',
             progress: 0,
+            showSingLrc: [],
         }
     }
     play () {
@@ -77,17 +80,19 @@ class Player extends Component{
         // console.log(this.props.playerData);
         let player = this.props.playerData.player;
         this.setState({
-            singPic: player.singPic? player.singPic : musicPic,
-            singLrc: player.singLrc,
+            singPic: player.singPic? player.singPic : musicPic3,
+            singLrc: player.singLrc ? player.singLrc.split('\n') : [],
             singAuthor: player.singAuthor ? player.singAuthor : '歌手不存在？',
             singTitle: player.singTitle? player.singTitle : '歌名不存在？',
             singId: player.singId ? player.singId : '',
-        })
+        }, () => {
+            this.formatSingLrc()
+        });
     }
     componentDidUpdate (prevProps, prevState){
         // this.playerProgress();
-        console.log(prevState);
-        console.log(prevProps);
+        // console.log(prevState);
+        // console.log(prevProps);
         if (prevProps.playerData.control.isPlay !== this.state.isPlay) {
             this.setState({
                 isPlay: prevProps.playerData.control.isPlay
@@ -103,16 +108,17 @@ class Player extends Component{
                 playList: prevProps.playerData.list
             })
         }
-        console.log(prevProps.playerData.player.singId);
-        console.log(this.state.singId);
+        // console.log(prevProps.playerData.player.singId);
+        // console.log(this.state.singId);
         if (prevProps.playerData.player.singId && prevProps.playerData.player.singId !== this.state.singId) {
             this.setState({
-                singPic: prevProps.playerData.player.singPic? prevProps.playerData.player.singPic : musicPic,
-                singLrc: prevProps.playerData.player.singLrc,
+                singPic: prevProps.playerData.player.singPic? prevProps.playerData.player.singPic : musicPic3,
+                singLrc: prevProps.playerData.player.singLrc? prevProps.playerData.player.singLrc.split('\n') : [],
                 singAuthor: prevProps.playerData.player.singAuthor ? prevProps.playerData.player.singAuthor : '歌手不存在？',
                 singTitle: prevProps.playerData.player.singTitle? prevProps.playerData.player.singTitle : '歌名不存在？',
                 singId: prevProps.playerData.player.singId ? prevProps.playerData.player.singId : ''
-            })
+            });
+
         }
 
     }
@@ -164,9 +170,42 @@ class Player extends Component{
         }
         return `${currentMin}:${currentSec}`;
     }
+    formatSingLrc () {
+        // console.log(this.state.singLrc);
+        let timeReg = /\[(\d{2,}):(\d{2,3})(?:\.(\d{2,3}))?]/g;
+        let tagRegMap = {
+            title: 'ti',
+            artist: 'ar',
+            album: 'al',
+            offset: 'offset',
+            by: 'by'
+        };
+        let arr = [];
+        this.state.singLrc.forEach((val, index) => {
+            let result = timeReg.exec(val);
+            if (result) {
+                let txt = val.replace(timeReg, '').trim();
+                if (txt) {
+                    arr.push({
+                        time: result[1]*60*1000 + result[2]*1000 + (result[3] || 0)*10,
+                        txt
+                    })
+                }
+            }
+        });
+        console.log(arr);
+        this.setState({
+            showSingLrc: arr
+        })
+    }
+    lrcTimeSelect () {
+
+    }
     render () {
         let currentTime = this.timeFormat(this.state.currentTime);
         let durationTime = this.timeFormat(this.state.durationTime);
+        // console.log(this.state.currentTime);
+        // console.log(moment(this.state.currentTime).get('millisecond'));
         let progress = Math.round((this.state.currentTime / this.state.durationTime) * 100);
         return (
             <div className={css(styles.container)}>
@@ -178,8 +217,8 @@ class Player extends Component{
                         <span className={css(styles.list_player)}>操作</span>
                     </div>
                     <ul>
-                        {this.state.playList.map(val => {
-                            return <li className={css(styles.player_list)}>
+                        {this.state.playList.map((val, index) => {
+                            return <li className={css(styles.player_list)} key={index}>
                                 <span className={css(styles.list_sing)}>{val.singTitle}</span>
                                 <span className={css(styles.list_singer)}>{val.singAuthor}</span>
                                 <span className={css(styles.list_player)} onClick={this.playListSing.bind(this, val)}>播放</span>
@@ -197,7 +236,11 @@ class Player extends Component{
                         <span>{this.state.singAuthor}</span>
                     </div>
                     <div className={css(styles.singLrc)}>
-                        歌词即将上线❤️
+                        <ul className={css(styles.singLrcList)}>
+                            {this.state.showSingLrc.map((val,index) => {
+                                return <li key={index} className={moment(this.state.currentTime).get('millisecond') >= moment(val.time).get('seconds') ? css(styles.singLrcActive, styles.singLrcItems) : css(styles.singLrcItems)}>{val.txt}</li>
+                            })}
+                        </ul>
                     </div>
                     <div className={css(styles.singTip)}>
                         音乐解析需要几秒时间，然后就会自动播放啦~
@@ -304,6 +347,8 @@ const styles = StyleSheet.create({
         fontSize: '20px',
         textAlign: 'center',
         paddingBottom: '20px',
+        height: '150px',
+        overflowY: 'scroll'
     },
     singTip: {
         marginTop: '10px',
@@ -363,5 +408,15 @@ const styles = StyleSheet.create({
         fontSize: '20px',
         width: '50px',
         textAlign: 'center'
+    },
+    singLrcActive: {
+        color: '#31c27c',
+        // fontWeight: 'bold',
+    },
+    singLrcList: {
+
+    },
+    singLrcItems: {
+        marginTop: '10px'
     }
 });

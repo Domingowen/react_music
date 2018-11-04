@@ -17,11 +17,12 @@ export default class DownLoad extends Component{
 }
 const styles = StyleSheet.create({
     container: {
-        width: '1000px',
-        margin: '0 auto',
+        // width: '1000px',
+        // margin: '0 auto',
         textAlign: 'center',
-        height: '400px',
+        height: '100vh',
         lineHeight: '400px',
-        fontSize: '24px'
+        fontSize: '24px',
+        // overflowY: 'scroll'
     }
 });

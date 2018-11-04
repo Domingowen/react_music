@@ -29,7 +29,9 @@ const styles = StyleSheet.create({
         height: '90px',
         position: 'relative',
         zIndex: 10,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        borderTopLeftRadius: '5px',
+        borderTopRightRadius: '5px',
     },
     header: {
         width: '1000px',
@@ -38,6 +40,7 @@ const styles = StyleSheet.create({
         borderBottom: '1px solid #f2f2f2',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        paddingLeft: '20px'
     }
 });

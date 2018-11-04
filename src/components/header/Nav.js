@@ -51,7 +51,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         height: '100%',
-        paddingLeft: '20px'
+        paddingLeft: '20px',
+        paddingRight: '20px'
     },
     nav_item: {
         height: '100%',
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
         fontSize: '18px',
     },
     active: {
-        backgroundColor: '#31c27c',
-        color: '#fff'
+        // backgroundColor: '#31c27c',
+        color: '#31c27c'
     }
 });

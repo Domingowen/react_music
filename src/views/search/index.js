@@ -230,7 +230,8 @@ const styles = StyleSheet.create({
     list: {
         width: '1000px',
         margin: '0 auto',
-        position: 'relative'
+        position: 'relative',
+        paddingLeft: '20px',
     },
     list_title: {
         display: 'flex',

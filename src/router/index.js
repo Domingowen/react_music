@@ -31,20 +31,18 @@ const RouterList = [
 export default class RouteList extends Component {
     render () {
         return (
-            <div>
-                <Switch>
-                    {/*{*/}
-                        {/*RouterList.map(val => {*/}
-                            {/*return <Route path={val.path} component={val.component} key={val.name}/>*/}
-                        {/*})*/}
-                    {/*}*/}
-                    <Route exact path='/' component={Home} />
-                    <Route path='/player' component={Player} />
-                    <Route path='/list' component={List} />
-                    <Route path='/search' component={Search} />
-                    <Route path='/app' component={DownLoad} />
-                </Switch>
-            </div>
+            <Switch>
+                {/*{*/}
+                    {/*RouterList.map(val => {*/}
+                        {/*return <Route path={val.path} component={val.component} key={val.name}/>*/}
+                    {/*})*/}
+                {/*}*/}
+                <Route exact path='/' component={Home} />
+                <Route path='/player' component={Player} />
+                <Route path='/list' component={List} />
+                <Route path='/search' component={Search} />
+                <Route path='/app' component={DownLoad} />
+            </Switch>
         )
     }
 }

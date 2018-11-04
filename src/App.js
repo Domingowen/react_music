@@ -20,7 +20,9 @@ class App extends Component {
                     <PlayerAudio/>
                     <Header/>
                     <div className={css(styles.container)}>
-                        <RouteList/>
+                        {/*<div className={css(styles.main)}>*/}
+                            <RouteList/>
+                        {/*</div>*/}
                     </div>
                 </div>
             </Router>
@@ -32,6 +34,33 @@ class App extends Component {
 const styles = StyleSheet.create({
     container: {
         minWidth: '1000px',
+        height: 'calc(100vh - 100px)',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        '::-webkit-scrollbar': {
+            width: '5px',
+            backgroundColor: '#f1f1f1',
+            borderBottomRightRadius: '5px',
+        },
+        // '::-webkit-scrollbar-track': {
+        //     background: '#f1f1f1'
+        // },
+        '::-webkit-scrollbar-thumb': {
+            background: '#31c27c',
+            borderRadius: '10px',
+        },
+        '::-webkit-scrollbar-button:start': {
+            display: 'none'
+        },
+
+        '::-webkit-scrollbar-button:end': {
+            display: 'none'
+        }
+    },
+    main: {
+        width: '1000px',
+        height: '100%',
+        margin: '0 auto',
     }
 });
 export default hot(module)(App)
