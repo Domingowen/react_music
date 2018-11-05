@@ -1,6 +1,6 @@
 body{
     background-color: #f1f1f1;
-    font-family: STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", "Gill Sans";
+    font-family: STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", "Gill Sans" !important;
     overflow-y: hidden;
     min-width: 1000px;
 }
@@ -15,11 +15,12 @@ body::-webkit-scrollbar-track{
 body::-webkit-scrollbar-thumb{
     background: #31c27c;
     border-radius: 5px;
+
 }
 .App{
     min-width: 1000px;
     height: calc(100vh - 10px);
-    box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 0 10px #999;
     margin: 5px;
     border-radius: 5px;
 }

@@ -16,52 +16,14 @@ export default class Home extends Component {
         super(props);
         this.state = {
             recommendSelect: 0,
-            recommendList: [
-                {
-                    title: '为你推荐',
-                    id: 0,
-                },
-                {
-                    title: 'R&B',
-                    id: 0,
-                },
-                {
-                    title: '国语经典',
-                    id: 0,
-                },
-                {
-                    title: '古筝',
-                    id: 0,
-                },
-                {
-                    title: '官方歌单',
-                    id: 0,
-                },
-                {
-                    title: '情歌',
-                    id: 0,
-                }
-            ],
-            recommendPlay: [],
             newSingSelect: 0,
-            newSingList: [
-                {
-                    title: '内地',
-                },
-                {
-                    title: '港台',
-                },
-                {
-                    title: '欧美',
-                },
-                {
-                    title: '韩国',
-                },
-                {
-                    title: '日本',
-                }
-            ],
+            newAlbumSelect: 0,
+            recommendList: [],
+            recommendPlay: [],
+            newSingList: [],
             newSingPlay: [],
+            newAlbumList: [],
+            newAlbumPlay:[],
             topSingList: {
                 pop: [],
                 hot: [],
@@ -69,20 +31,139 @@ export default class Home extends Component {
                 newSing: [],
                 korean: []
             },
+
         }
     }
-    handleSelectRecommend (index) {
+    handleSelectRecommend (index, id) {
         this.setState({
             recommendSelect: index
         })
     }
     handleSelectNewSing (index, id) {
-        console.log(id);
         this.setState({
             newSingSelect: index,
         })
     }
+    handleSelectNewAlbum (index, id){
+        this.setState({
+            newAlbumSelect: index,
+        })
+    }
+    recommendCarousel = null;
     newSingCarousel = null;
+    newAlbumCarousel = null;
+    componentDidMount () {
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/recommend'
+        }).then((res) => {
+            console.log(res.data.data);
+            let data = res.data.data;
+            let newSong = [];
+            for(let i=0,len=data.new_song.data.song_list.length - 1;i<len;i+=9){
+                newSong.push(data.new_song.data.song_list.slice(i,i+9));
+            }
+            let recList = [];
+            for(let i=0;i<5;i++){
+                recList.push(data.category.data.category[0].items[i]);
+            }
+            // console.log(recList);
+            let recommend = [];
+            for(let i=0,len=10;i<len;i+=5){
+                recommend.push(data.recomPlaylist.data.v_hot.slice(i,i+5));
+            }
+            // console.log(recommend);
+            let newAlbum = [];
+            for(let i=0,len=data.new_album.data.list.length - 1;i<len;i+=10){
+                newAlbum.push(data.new_album.data.list.slice(i,i+10));
+            }
+            this.setState({
+                recommendPlay: recommend,
+                recommendList: recList,
+                newSingPlay: newSong,
+                newSingList: data.new_song.data.type_info,
+                newAlbumPlay: newAlbum,
+                newAlbumList: data.new_album.data.tags.area,
+                // topSingList: data.toplist.data.group_list[0].list
+            });
+            // console.log(this.state.topSingList);
+        }).catch((res) => {
+            console.log(res);
+        });
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            data: {
+                topId: 4,
+                // date: moment().format('YYYY-MM-DD')
+            }
+        }).then((res) => {
+            // console.log(res);
+            let data = res.data.data;
+            this.setState({
+                topSingList: Object.assign({}, this.state.topSingList,{pop: data.songlist})
+            })
+        });
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            data: {
+                topId: 26,
+                // date: moment().format('YYYY-MM-DD')
+            }
+        }).then((res) => {
+            // console.log(res);
+            let data = res.data.data;
+            this.setState({
+                topSingList: Object.assign({}, this.state.topSingList,{hot: data.songlist})
+            })
+        });
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            data: {
+                topId: 27,
+                // date: moment().format('YYYY-MM-DD')
+            }
+        }).then((res) => {
+            // console.log(res);
+            let data = res.data.data;
+            this.setState({
+                topSingList: Object.assign({}, this.state.topSingList,{newSing: data.songlist})
+            })
+        });
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            data: {
+                topId: 3,
+                // date: moment().format('YYYY-MM-DD')
+            }
+        }).then((res) => {
+            // console.log(res);
+            let data = res.data.data;
+            this.setState({
+                topSingList: Object.assign({}, this.state.topSingList,{europe: data.songlist})
+            })
+        });
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            data: {
+                topId: 16,
+                // date: moment().format('YYYY-MM-DD')
+            }
+        }).then((res) => {
+            // console.log(res);
+            let data = res.data.data;
+            this.setState({
+                topSingList: Object.assign({}, this.state.topSingList,{korean: data.songlist})
+            }, () => {
+                console.log(this.state.topSingList);
+            })
+        });
+
+    };
     render () {
         return (
             <div className={css(styles.container)}>
@@ -92,15 +173,42 @@ export default class Home extends Component {
                 <ul className={css(styles.menu)}>
                     {
                         this.state.recommendList.map((val, index) => {
-                            return <li key={index} className={css(styles.menu_item, this.state.recommendSelect === index ? styles.menu_item_active : null)} onClick={this.handleSelectRecommend.bind(this, index)}>{val.title}</li>
+                            return <li key={index} className={css(styles.menu_item, this.state.recommendSelect === index ? styles.menu_item_active : null)} onClick={this.handleSelectRecommend.bind(this, index, val.item_id)}>{val.item_name}</li>
                         })
                     }
                 </ul>
-                {/*<Carousel className={css(styles.carousel_list)}>*/}
-                    {/*<div className={css(styles.carousel_item)}>*/}
-
-                    {/*</div>*/}
-                {/*</Carousel>*/}
+                <div className={css(styles.carousel_container)}>
+                    {this.state.recommendPlay.length > 0 ?
+                        <Carousel
+                            ref={(el) => this.recommendCarousel = el}
+                            dots={true}
+                            autoplay={true}
+                            speed={500}
+                            autoplaySpeed={5000}
+                            className={css(styles.carousel_list)}>
+                            {
+                                this.state.recommendPlay.map((val, index) => {
+                                    return <div className={css(styles.carousel_recommend_container)} key={index}>
+                                        <ul className={css(styles.carousel_recommend_list)}>
+                                            {val.map((val, index) => {
+                                                return  <li className={css(styles.carousel_recommend_items)} key={index}>
+                                                    <img className={css(styles.carousel_rec_img)} src={val.cover} alt=""/>
+                                                    <span className={css(styles.carousel_rec_txt)}>{val.title}</span>
+                                                </li>
+                                            })}
+                                        </ul>
+                                    </div>
+                                })
+                            }
+                        </Carousel> : null
+                    }
+                    <div className={css(styles.carousel_btn_left)} onClick={() => {this.recommendCarousel.prev()}}>
+                        <IconFont type="icon-zuojiantou" />
+                    </div>
+                    <div className={css(styles.carousel_btn_right)} onClick={() => {this.recommendCarousel.next()}}>
+                        <IconFont type="icon-youjiantou" />
+                    </div>
+                </div>
                 <div className={css(styles.title)}>
                     新歌首发
                 </div>
@@ -111,46 +219,87 @@ export default class Home extends Component {
                         })
                     }
                 </ul>
-
-                    <div className={css(styles.carousel_container)}>
-                        {this.state.newSingPlay.length > 0 ?
-                            <Carousel
-                                ref={(el) => this.newSingCarousel = el}
-                                dots={true}
-                                autoplay={true}
-                                speed={500}
-                                autoplaySpeed={5000}
-                                className={css(styles.carousel_list)}>
-                                {
-                                    this.state.newSingPlay.map((val, index) => {
-                                        return <div className={css(styles.carousel_new_item)} key={index}>
-                                            <ul className={css(styles.carousel_new_list)}>
-                                                {val.map((val, index) => {
-                                                    return <li className={css(styles.carousel_new_list_item)} key={index}>
-                                                        <img
-                                                            className={css(styles.carousel_new_list_item_img)}
-                                                            src={`//y.gtimg.cn/music/photo_new/T002R150x150M000${val.album.mid}.jpg?max_age=2592000`}
-                                                            alt=""/>
-                                                        <div className={css(styles.carousel_new_list_item_text)}>
-                                                            <span className={css(styles.carousel_new_list_title)}>{val.title}</span>
-                                                            <span>{val.singer[0].title}</span>
-                                                        </div>
-                                                    </li>
-                                                })}
-                                            </ul>
-                                        </div>
-                                    })
-                                }
-                            </Carousel> : null
-                        }
-                        <div className={css(styles.carousel_btn_left)} onClick={this.newSingBtnLeft.bind(this)}>
-                            <IconFont type="icon-zuojiantou" />
-                        </div>
-                        <div className={css(styles.carousel_btn_right)} onClick={this.newSingBtnRight.bind(this)}>
-                            <IconFont type="icon-youjiantou" />
-                        </div>
+                <div className={css(styles.carousel_container)}>
+                    {this.state.newSingPlay.length > 0 ?
+                        <Carousel
+                            ref={(el) => this.newSingCarousel = el}
+                            dots={true}
+                            autoplay={true}
+                            speed={500}
+                            autoplaySpeed={5000}
+                            className={css(styles.carousel_list)}>
+                            {
+                                this.state.newSingPlay.map((val, index) => {
+                                    return <div className={css(styles.carousel_new_item)} key={index}>
+                                        <ul className={css(styles.carousel_new_list)}>
+                                            {val.map((val, index) => {
+                                                return <li className={css(styles.carousel_new_list_item)} key={index}>
+                                                    <img
+                                                        className={css(styles.carousel_new_list_item_img)}
+                                                        src={`//y.gtimg.cn/music/photo_new/T002R150x150M000${val.album.mid}.jpg?max_age=2592000`}
+                                                        alt=""/>
+                                                    <div className={css(styles.carousel_new_list_item_text)}>
+                                                        <span className={css(styles.carousel_new_list_title)}>{val.title}</span>
+                                                        <span>{val.singer[0].title}</span>
+                                                    </div>
+                                                </li>
+                                            })}
+                                        </ul>
+                                    </div>
+                                })
+                            }
+                        </Carousel> : null
+                    }
+                    <div className={css(styles.carousel_btn_left)} onClick={()=> {this.newSingCarousel.prev()}}>
+                        <IconFont type="icon-zuojiantou" />
                     </div>
-
+                    <div className={css(styles.carousel_btn_right)} onClick={()=> {this.newSingCarousel.next()}}>
+                        <IconFont type="icon-youjiantou" />
+                    </div>
+                </div>
+                <div className={css(styles.title)}>
+                    新碟首发
+                </div>
+                <ul className={css(styles.menu)}>
+                    {
+                        this.state.newAlbumList.map((val, index) => {
+                            return <li key={index} className={css(styles.menu_item, this.state.newAlbumSelect === index ? styles.menu_item_active : null)} onClick={this.handleSelectNewAlbum.bind(this, index, val.id)}>{val.name}</li>
+                        })
+                    }
+                </ul>
+                <div className={css(styles.carousel_container)}>
+                    {this.state.newAlbumPlay.length > 0 ?
+                        <Carousel
+                            ref={(el) => this.newAlbumCarousel = el}
+                            dots={true}
+                            autoplay={true}
+                            speed={500}
+                            autoplaySpeed={6000}
+                            className={css(styles.carousel_list)}>
+                            {
+                                this.state.newAlbumPlay.map((val, index) => {
+                                    return <div className={css(styles.carousel_album_container)} key={index}>
+                                        <ul className={css(styles.carousel_album_list)}>
+                                            {val.map((val, index) => {
+                                                return  <li className={css(styles.carousel_album_items)} key={index}>
+                                                    <img className={css(styles.carousel_album_img)} src={`//y.gtimg.cn/music/photo_new/T002R300x300M000${val.album_mid}.jpg?max_age=2592000`} alt=""/>
+                                                    <span className={css(styles.carousel_album_txt)}>{val.album_name}</span>
+                                                    <span className={css(styles.carousel_album_txt)}>{val.singers[0].singer_name}</span>
+                                                </li>
+                                            })}
+                                        </ul>
+                                    </div>
+                                })
+                            }
+                        </Carousel> : null
+                    }
+                    <div className={css(styles.carousel_btn_left)} onClick={() => {this.newAlbumCarousel.prev()}}>
+                        <IconFont type="icon-zuojiantou" />
+                    </div>
+                    <div className={css(styles.carousel_btn_right)} onClick={() => {this.newAlbumCarousel.next()}}>
+                        <IconFont type="icon-youjiantou" />
+                    </div>
+                </div>
                 <div className={css(styles.title)}>
                     音乐排行榜
                 </div>
@@ -239,118 +388,11 @@ export default class Home extends Component {
             </div>
         )
     }
-    newSingBtnLeft () {
-        this.newSingCarousel.prev();
-    }
-    newSingBtnRight () {
-        // console.log(this.newSingCarousel);
-        this.newSingCarousel.next();
-    }
-    componentDidMount () {
-        axios({
-            method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/recommend'
-        }).then((res) => {
-            console.log(res.data.data);
-            let data = res.data.data;
-            let newSong = [];
-            for(let i=0,len=data.new_song.data.song_list.length - 1;i<len;i+=9){
-                newSong.push(data.new_song.data.song_list.slice(i,i+9));
-            }
-            console.log(newSong);
-            this.setState({
-                recommendPlay: data.recomPlaylist.data.v_hot,
-                newSingPlay: newSong,
-                newSingList: data.new_song.data.type_info,
-                // topSingList: data.toplist.data.group_list[0].list
-            });
-            console.log(this.state.topSingList);
-        }).catch((res) => {
-            console.log(res);
-        });
-        axios({
-            method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
-            data: {
-                topId: 4,
-                // date: moment().format('YYYY-MM-DD')
-            }
-        }).then((res) => {
-            console.log(res);
-            let data = res.data.data;
-            this.setState({
-                topSingList: Object.assign({}, this.state.topSingList,{pop: data.songlist})
-            })
-        });
-        axios({
-            method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
-            data: {
-                topId: 26,
-                // date: moment().format('YYYY-MM-DD')
-            }
-        }).then((res) => {
-            console.log(res);
-            let data = res.data.data;
-            this.setState({
-                topSingList: Object.assign({}, this.state.topSingList,{hot: data.songlist})
-            })
-        });
-        axios({
-            method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
-            data: {
-                topId: 27,
-                // date: moment().format('YYYY-MM-DD')
-            }
-        }).then((res) => {
-            console.log(res);
-            let data = res.data.data;
-            this.setState({
-                topSingList: Object.assign({}, this.state.topSingList,{newSing: data.songlist})
-            })
-        });
-        axios({
-            method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
-            data: {
-                topId: 3,
-                // date: moment().format('YYYY-MM-DD')
-            }
-        }).then((res) => {
-            console.log(res);
-            let data = res.data.data;
-            this.setState({
-                topSingList: Object.assign({}, this.state.topSingList,{europe: data.songlist})
-            })
-        });
-        axios({
-            method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
-            data: {
-                topId: 16,
-                // date: moment().format('YYYY-MM-DD')
-            }
-        }).then((res) => {
-            console.log(res);
-            let data = res.data.data;
-            this.setState({
-                topSingList: Object.assign({}, this.state.topSingList,{korean: data.songlist})
-            }, () => {
-                console.log(this.state.topSingList);
-            })
-        });
-
-    }
 }
 const styles = StyleSheet.create({
     container: {
         width: '1000px',
         margin: '0 auto',
-        // textAlign: 'center',
-        // height: '200px',
-        // lineHeight: '100px',
-        // fontSize: '24px'
     },
     title: {
         height: '100px',
@@ -377,18 +419,41 @@ const styles = StyleSheet.create({
     },
     carousel_container: {
         position: 'relative',
-        height: '400px',
-        // 'hover': {
-        //     carousel_btn_left: {
-        //         display: 'flex'
-        //     },
-        //     carousel_btn_right: {
-        //         display: 'flex'
-        //     }
-        // }
+        minHeight: '200px'
+    },
+    carousel_recommend_container: {
+        height: '100%',
+        marginTop: '30px'
+    },
+    carousel_recommend_list: {
+        display: 'flex',
+        justifyContent: 'space-between'
+    },
+    carousel_recommend_items: {
+        width: '20%',
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center',
+        cursor: 'pointer',
+        paddingBottom: '30px',
+        ':hover': {
+            color: '#31c27c'
+        }
+    },
+    carousel_rec_img: {
+        width: '185px',
+        height: '185px',
+    },
+    carousel_rec_txt: {
+        width: '185px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        marginTop: '10px',
     },
     carousel_list: {
-
+        height: '100%'
     },
     carousel_btn_left: {
         position: 'absolute',
@@ -430,13 +495,15 @@ const styles = StyleSheet.create({
             backgroundColor: 'rgba(0,0,0,.4)',
         }
     },
-    carousel_new_item: {},
+    carousel_new_item: {
+        // paddingBottom: '50px'
+    },
     carousel_new_list: {
         display: 'flex',
         // alignItems: 'center',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        marginBottom: '20px'
+        marginBottom: '30px'
     },
     carousel_new_list_item: {
         display: 'flex',
@@ -464,6 +531,34 @@ const styles = StyleSheet.create({
         width: '150px',
         paddingBottom: '10px'
     },
+    carousel_album_container: {
+
+    },
+    carousel_album_list: {
+        display: 'flex',
+        // alignItems: 'center',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        marginBottom: '30px'
+    },
+    carousel_album_items: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        marginTop: '30px',
+        cursor: 'pointer',
+        ':hover': {
+            color: '#31c27c'
+        }
+    },
+    carousel_album_img: {
+        width: '180px',
+        height: '180px',
+    },
+    carousel_album_txt: {
+        paddingTop: '5px'
+    },
     rank_sing: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -476,6 +571,10 @@ const styles = StyleSheet.create({
         borderRadius: '5px',
         // padding: '20px 0 0 0',
         boxShadow: '0 0 20px #ccc',
+        transition: '0.5s all',
+        ':hover': {
+            transform: 'translate3d(0, -10px, 0)'
+        }
 
     },
     rank_bg: {
@@ -511,7 +610,7 @@ const styles = StyleSheet.create({
         cursor: 'pointer',
         color: '#000',
         ':hover': {
-            color: '#31c27c'
+            color: '#31c27c',
         }
     },
     rank_txt: {
