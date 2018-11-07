@@ -119,7 +119,7 @@ class AudioPlayer extends Component {
         return (
             this.state.singUrl ?
                 <audio
-                    // style={{display: 'none'}}
+                    style={{display: 'none'}}
                     src={this.state.singUrl}
                     // id="Audio"
                     preload={'auto'}
