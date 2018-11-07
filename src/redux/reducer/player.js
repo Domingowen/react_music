@@ -62,7 +62,7 @@ const Player = (state = initialState, action) => {
             return Object.assign({}, state, {
                 control: {
                     isPlay: action.item.isPlay !== undefined ? action.item.isPlay : true ,
-                    playIndex: action.item.playIndex !== undefined ? action.item.playIndex: state.control.playIndex,
+                    // playIndex: action.item.playIndex !== undefined ? action.item.playIndex: state.control.playIndex,
                 }
             });
         case 'PLAYINDEX':

@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
         position: 'relative',
         zIndex: 10,
         overflow: 'hidden',
-        borderTopLeftRadius: '5px',
-        borderTopRightRadius: '5px',
+        // borderTopLeftRadius: '5px',
+        // borderTopRightRadius: '5px',
     },
     header: {
         width: '1000px',

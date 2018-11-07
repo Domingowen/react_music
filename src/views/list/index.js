@@ -45,10 +45,10 @@ class List extends Component{
         console.log(index);
         this.props.addPlayer(item);
         this.props.addAudio(item);
-        this.props.changeControl({
-            isPlay: true,
-            playIndex: index
-        })
+        // this.props.changeControl({
+        //     isPlay: true,
+        //     playIndex: index
+        // })
     }
     deleteItem (item) {
         console.log(item);

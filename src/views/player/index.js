@@ -8,6 +8,7 @@ import musicPic3 from '../../assets/music_bg3.png';
 import Progress from 'antd/lib/progress';
 import 'antd/lib/progress/style/index.css';
 import moment from 'moment';
+import _ from 'lodash';
 class Player extends Component{
     constructor(props) {
         super(props);
@@ -30,43 +31,34 @@ class Player extends Component{
         this.setState({
             isPlay: !this.state.isPlay
         }, () => {
+            console.log(this.state.isPlay);
             if(this.state.isPlay) {
                 this.props.changeControl({
-                    playIndex: this.state.playIndex,
                     isPlay: true,
-                })
+                });
             } else {
                 this.props.changeControl({
-                    playIndex: this.state.playIndex,
                     isPlay: false,
                 })
             }
         });
     }
     prevSing () {
-        this.setState({
-            playIndex: this.state.playIndex > 0 ? this.state.playIndex - 1 : this.state.playList.length - 1
-        }, () => {
-            console.log(this.state.playList[this.state.playIndex]);
-            this.props.changeControl({
-                playIndex: this.state.playIndex,
-                isPlay: true,
-            });
-            this.props.changePlayer(this.state.playList[this.state.playIndex])
-        })
+        let index = _.findIndex(this.state.playList, {singId: this.state.singId});
+        console.log(index);
+        if (index > 0) {
+            this.props.changePlayer(this.state.playList[index - 1]);
+        } else {
+            this.props.changePlayer(this.state.playList[this.state.playList.length - 1]);
+        }
     }
     nextSing () {
-        if(this.state.playList.length > 0) {
-            this.setState({
-                playIndex: this.state.playIndex >= this.state.playList.length - 1 ? 0 : this.state.playIndex + 1
-            }, () => {
-                console.log(this.state.playList[this.state.playIndex]);
-                this.props.changeControl({
-                    playIndex: this.state.playIndex,
-                    isPlay: true,
-                });
-                this.props.changePlayer(this.state.playList[this.state.playIndex])
-            });
+        let index = _.findIndex(this.state.playList, {singId: this.state.singId});
+        console.log(index);
+        if (this.state.playList.length - 1 > index) {
+            this.props.changePlayer(this.state.playList[index + 1]);
+        } else {
+            this.props.changePlayer(this.state.playList[0]);
         }
     }
     playListSing (item) {
@@ -77,61 +69,62 @@ class Player extends Component{
     //     console.log(nextState);
     // }
     componentDidMount () {
-        // console.log(this.props.playerData);
-        let player = this.props.playerData.player;
+        // console.log(this.props.playerData.control.isPlay);
+        this.formatSingLrc();
         this.setState({
-            singPic: player.singPic? player.singPic : musicPic3,
-            singLrc: player.singLrc ? player.singLrc.split('\n') : [],
-            singAuthor: player.singAuthor ? player.singAuthor : '歌手不存在？',
-            singTitle: player.singTitle? player.singTitle : '歌名不存在？',
-            singId: player.singId ? player.singId : '',
+            isPlay: this.props.playerData.control.isPlay
         }, () => {
-            this.formatSingLrc()
-        });
+            console.log(this.state.isPlay);
+        })
     }
     componentDidUpdate (prevProps, prevState){
-        // this.playerProgress();
-        // console.log(prevState);
-        // console.log(prevProps);
-        if (prevProps.playerData.control.isPlay !== this.state.isPlay) {
-            this.setState({
-                isPlay: prevProps.playerData.control.isPlay
-            })
+        let playerData = prevProps.playerData;
+        if (playerData.player.singId && playerData.player.singId !== this.state.singId) {
+            this.formatSingLrc();
         }
-        if (prevProps.playerData.control.playIndex !== this.state.playIndex) {
-            this.setState({
-                playIndex: prevProps.playerData.control.playIndex
-            })
-        }
-        if (prevProps.playerData.list.length !== this.state.playList.length) {
-            this.setState({
-                playList: prevProps.playerData.list
-            })
-        }
-        // console.log(prevProps.playerData.player.singId);
-        // console.log(this.state.singId);
-        if (prevProps.playerData.player.singId && prevProps.playerData.player.singId !== this.state.singId) {
-            this.setState({
-                singPic: prevProps.playerData.player.singPic? prevProps.playerData.player.singPic : musicPic3,
-                singLrc: prevProps.playerData.player.singLrc? prevProps.playerData.player.singLrc.split('\n') : [],
-                singAuthor: prevProps.playerData.player.singAuthor ? prevProps.playerData.player.singAuthor : '歌手不存在？',
-                singTitle: prevProps.playerData.player.singTitle? prevProps.playerData.player.singTitle : '歌名不存在？',
-                singId: prevProps.playerData.player.singId ? prevProps.playerData.player.singId : ''
-            });
-
-        }
-
+        // if (prevProps.playerData.control.isPlay !== this.props.playerData.control.isPlay) {
+        //     this.setState({
+        //         isPlay: this.props.playerData.control.isPlay
+        //     })
+        // }
     }
     static getDerivedStateFromProps(nextProps, prevState) {
-        let audio = nextProps.playerData.time;
         // console.log(nextProps);
+        // console.log(prevState);
+        let audio = nextProps.playerData.time;
+        let playerData = nextProps.playerData;
+        let currentTime = prevState.currentTime;
+        let durationTime =  prevState.durationTime;
+        let singPic = prevState.singPic;
+        let singLrc = prevState.singLrc;
+        let singAuthor = prevState.singAuthor;
+        let singTitle = prevState.singTitle;
+        let singId = prevState.singId;
+        let playList = prevState.playList;
         if (audio.currentTime && audio.durationTime) {
-            return {
-                currentTime: audio.currentTime ? audio.currentTime : 0,
-                durationTime: audio.durationTime ? audio.durationTime : 0,
-            }
+            currentTime = audio.currentTime ? audio.currentTime : 0;
+            durationTime = audio.durationTime ? audio.durationTime : 0;
         }
-        return null;
+        if (playerData.player.singId && playerData.player.singId !== prevState.singId) {
+            singPic = playerData.player.singPic;
+            singLrc = playerData.player.singLrc.split('\n');
+            singAuthor = playerData.player.singAuthor;
+            singTitle = playerData.player.singTitle;
+            singId = playerData.player.singId;
+        }
+        if (playerData.list.length !== prevState.playList.length) {
+            playList= playerData.list
+        }
+        return {
+            currentTime: currentTime,
+            durationTime: durationTime,
+            singPic: singPic,
+            singLrc: singLrc,
+            singAuthor: singAuthor,
+            singTitle: singTitle,
+            singId: singId,
+            playList: playList,
+        };
     }
     playerProgress() {
         // console.log(this.state.currentTime);
@@ -204,9 +197,12 @@ class Player extends Component{
     render () {
         let currentTime = this.timeFormat(this.state.currentTime);
         let durationTime = this.timeFormat(this.state.durationTime);
-        // console.log(this.state.currentTime);
-        // console.log(moment(this.state.currentTime).get('millisecond'));
         let progress = Math.round((this.state.currentTime / this.state.durationTime) * 100);
+        // console.log(moment(this.state.currentTime).get('millisecond'));
+        // console.log(moment(81480/ 1000).get('millisecond'));
+        // console.log(moment().millisecond());
+        // console.log(moment.unix(81480));
+        // console.log(this.state.currentTime)
         return (
             <div className={css(styles.container)}>
                 <div className={css(styles.container_left)}>
@@ -238,7 +234,7 @@ class Player extends Component{
                     <div className={css(styles.singLrc)}>
                         <ul className={css(styles.singLrcList)}>
                             {this.state.showSingLrc.map((val,index) => {
-                                return <li key={index} className={moment(this.state.currentTime).get('millisecond') >= moment(val.time).get('seconds') ? css(styles.singLrcActive, styles.singLrcItems) : css(styles.singLrcItems)}>{val.txt}</li>
+                                return <li key={index} className={moment(this.state.currentTime).get('millisecond') >= moment(parseInt(val.time) / 1000).get('millisecond')? css(styles.singLrcActive, styles.singLrcItems) : css(styles.singLrcItems)}>{val.txt}</li>
                             })}
                         </ul>
                     </div>
@@ -289,7 +285,8 @@ const styles = StyleSheet.create({
         height: '450px',
         marginTop: '10px',
         paddingLeft: '10px',
-        overflow: 'scroll'
+        overflowY: 'auto',
+        overflowX: 'hidden',
     },
     container_right: {
         width: '500px',

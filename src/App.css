@@ -19,8 +19,8 @@ body::-webkit-scrollbar-thumb{
 }
 .App{
     min-width: 1000px;
-    height: calc(100vh - 10px);
-    box-shadow: 0 0 10px #999;
-    margin: 5px;
-    border-radius: 5px;
+    height: 100vh;
+    /*box-shadow: 0 0 10px #999;*/
+    /*margin: 5px;*/
+    /*border-radius: 5px;*/
 }

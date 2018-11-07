@@ -50,7 +50,7 @@ class Search extends Component{
         this.props.addAudio(items);
         this.props.changeAudioControl({
             isPlayer: true,
-            playIndex: 0,
+        //     playIndex: 0,
         });
         let searchList = this.state.searchList.map((val, index) => {
             if (val.songid === item.songid) {
@@ -75,7 +75,7 @@ class Search extends Component{
     getData () {
         axios({
             method: 'post',
-            url: 'http://192.168.99.54:20200/v1/music/searchname',
+            url: 'http://192.168.254.103:20200/v1/music/searchname',
             data: {
                 search: this.state.text,
                 filter: this.state.filter,

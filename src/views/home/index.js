@@ -18,7 +18,12 @@ export default class Home extends Component {
             recommendSelect: 0,
             newSingSelect: 0,
             newAlbumSelect: 0,
-            recommendList: [],
+            recommendList: [
+                {
+                    item_name: '编辑推荐',
+                    item_id: 0,
+                }
+            ],
             recommendPlay: [],
             newSingList: [],
             newSingPlay: [],
@@ -64,7 +69,7 @@ export default class Home extends Component {
                 newSong.push(data.new_song.data.song_list.slice(i,i+9));
             }
             let recList = [];
-            for(let i=0;i<5;i++){
+            for(let i=0;i<4;i++){
                 recList.push(data.category.data.category[0].items[i]);
             }
             // console.log(recList);
@@ -79,7 +84,7 @@ export default class Home extends Component {
             }
             this.setState({
                 recommendPlay: recommend,
-                recommendList: recList,
+                recommendList: [...this.state.recommendList,...recList],
                 newSingPlay: newSong,
                 newSingList: data.new_song.data.type_info,
                 newAlbumPlay: newAlbum,
