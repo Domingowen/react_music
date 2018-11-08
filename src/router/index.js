@@ -1,4 +1,4 @@
-import {Route, Switch} from 'react-router-dom';
+import {Route, Switch, Redirect} from 'react-router-dom';
 import React, {Component} from 'react';
 import Home from '../views/home';
 import List from '../views/list';
@@ -37,7 +37,8 @@ export default class RouteList extends Component {
                         {/*return <Route path={val.path} component={val.component} key={val.name}/>*/}
                     {/*})*/}
                 {/*}*/}
-                <Route exact path='/' component={Home} />
+                <Redirect from="/" to="/home" exact/>
+                <Route path='/home' component={Home} />
                 <Route path='/player' component={Player} />
                 <Route path='/list' component={List} />
                 <Route path='/search' component={Search} />

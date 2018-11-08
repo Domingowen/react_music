@@ -8,7 +8,7 @@ export default class Nav extends Component {
             navList: [
                 {
                     title: '音乐推荐',
-                    url: '/',
+                    url: '/home',
                     id: 0,
                 },
                 {
@@ -39,7 +39,7 @@ export default class Nav extends Component {
         return (
             <ul className={css(styles.nav)}>
                 {this.state.navList.map(val => <li key={val.id} className={css(styles.nav_item)}>
-                    <NavLink exact to={val.url} className={css(styles.a)} activeClassName={css(styles.active)}>{val.title}</NavLink>
+                    <NavLink to={val.url} className={css(styles.a)} activeClassName={css(styles.active)}>{val.title}</NavLink>
                 </li>)}
             </ul>
         )
