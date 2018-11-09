@@ -6,6 +6,7 @@ import Carousel from 'antd/lib/carousel';
 import 'antd/lib/carousel/style/index.css';
 import Icon from 'antd/lib/icon';
 import moment from 'moment';
+import Player from "../../redux/reducer/player";
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_gc5awkku4zq.js',
 });
@@ -132,6 +133,40 @@ export default class Home extends Component {
         });
         this.setState({
             newAlbumSelect: index,
+        })
+    }
+    handleDetailSingRecommend (val) {
+        console.log(val);
+        this.props.history.push({
+            pathname: '/home/detail',
+            state: {
+                item: val
+            }
+        })
+    }
+    handleDetailSingNew (val) {
+        // console.log(val);
+        // this.props.history.push("/home/detail")
+    }
+    handleDetailSingAlbum (val) {
+        console.log(val);
+        // this.props.history.push("/home/detail")
+    }
+    handlePlayNewSong (val) {
+        console.log(val);
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/searchname',
+            data: {
+                search: val.mid,
+                filter: 'id',
+                type: 'qq',
+                page: 1,
+            }
+        }).then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
         })
     }
     recommendCarousel = null;
@@ -276,7 +311,7 @@ export default class Home extends Component {
                                     return <div className={css(styles.carousel_recommend_container)} key={index}>
                                         <ul className={css(styles.carousel_recommend_list)}>
                                             {val.map((val, index) => {
-                                                return  <li className={css(styles.carousel_recommend_items)} key={index}>
+                                                return  <li className={css(styles.carousel_recommend_items)} key={index} onClick={this.handleDetailSingRecommend.bind(this, val)}>
                                                     {   val.cover_url_big ?
                                                         <img className={css(styles.carousel_rec_img)} src={val.cover_url_big} alt=""/> :
                                                         <img className={css(styles.carousel_rec_img)} src={val.cover} alt=""/>
@@ -321,7 +356,7 @@ export default class Home extends Component {
                                     return <div className={css(styles.carousel_new_item)} key={index}>
                                         <ul className={css(styles.carousel_new_list)}>
                                             {val.map((val, index) => {
-                                                return <li className={css(styles.carousel_new_list_item)} key={index}>
+                                                return <li className={css(styles.carousel_new_list_item)} key={index} onClick={this.handlePlayNewSong.bind(this, val)}>
                                                     <img
                                                         className={css(styles.carousel_new_list_item_img)}
                                                         src={`//y.gtimg.cn/music/photo_new/T002R150x150M000${val.album.mid}.jpg?max_age=2592000`}
@@ -369,7 +404,7 @@ export default class Home extends Component {
                                     return <div className={css(styles.carousel_album_container)} key={index}>
                                         <ul className={css(styles.carousel_album_list)}>
                                             {val.map((val, index) => {
-                                                return  <li className={css(styles.carousel_album_items)} key={index}>
+                                                return  <li className={css(styles.carousel_album_items)} key={index} onClick={this.handleDetailSingAlbum.bind(this, val)}>
                                                     <img className={css(styles.carousel_album_img)} src={`//y.gtimg.cn/music/photo_new/T002R300x300M000${val.album_mid}.jpg?max_age=2592000`} alt=""/>
                                                     <span className={css(styles.carousel_album_txt)}>{val.album_name}</span>
                                                     <span className={css(styles.carousel_album_txt)}>{val.singers[0].singer_name}</span>
