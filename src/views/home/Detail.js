@@ -64,14 +64,17 @@ export default class Detail extends Component {
                             <li className={css(styles.list_sing)}>歌曲</li>
                             <li className={css(styles.list_author)}>歌手</li>
                             <li className={css(styles.list_album)}>专辑</li>
-                            <li className={css(styles.list_operate)}>操作</li>
+                            {/*<li className={css(styles.list_operate)}>操作</li>*/}
                         </ul>
                         {this.state.itemData.songlist ? this.state.itemData.songlist.map((val, index) => {
                             return <ul className={css(styles.list_content)} key={index} onClick={this.play.bind(this, val)}>
-                                <li className={css(styles.list_sing)}>{val.songname}</li>
+                                <li className={css(styles.list_sing)}>
+                                    <span className={css(styles.list_number)}>{index + 1}</span>
+                                    {val.songname}
+                                    </li>
                                 <li className={css(styles.list_author)}>{val.singer.map(val => <span key={val.id}>{val.name}</span>)}</li>
                                 <li className={css(styles.list_album)}>{val.albumname}</li>
-                                <li className={css(styles.list_operate)}>播放</li>
+                                <li className={css(styles.list_operate)}></li>
                             </ul>
                         }) : null}
                     </div>
@@ -141,7 +144,7 @@ const styles = StyleSheet.create({
 
         // color: '#fff',
         // borderBottom: '1px solid #613400',
-        padding: '0 20px',
+        // padding: '0 20px',
 
 
     },
@@ -150,13 +153,33 @@ const styles = StyleSheet.create({
 
     },
     list_sing: {
-        width: '300px',
+        width: '270px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        paddingRight: '100px',
+        position: 'relative',
+        paddingLeft: '40px'
+    },
+    list_number: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        zIndex: 10,
     },
     list_author: {
-        width: '300px'
+        width: '150px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        paddingRight: '100px',
     },
     list_album: {
-        width: '250px'
+        width: '180px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        // paddingRight: '30px',
     },
     list_operate: {
         width: '150px',
@@ -167,9 +190,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // justifyContent: 'center',
         cursor: 'pointer',
-        fontSize: '16px',
+        fontSize: '18px',
         fontWeight: 700,
-        padding: '20px 20px',
+        padding: '20px 0 20px 0',
         ':hover': {
             color: '#31c27c'
         }

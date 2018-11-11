@@ -50,7 +50,6 @@ class Search extends Component{
         this.props.addAudio(items);
         this.props.changeAudioControl({
             isPlayer: true,
-        //     playIndex: 0,
         });
         let searchList = this.state.searchList.map((val, index) => {
             if (val.songid === item.songid) {

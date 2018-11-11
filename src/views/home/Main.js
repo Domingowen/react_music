@@ -5,14 +5,21 @@ import Carousel from 'antd/lib/carousel';
 // import Carousel from 'nuka-carousel';
 import 'antd/lib/carousel/style/index.css';
 import Icon from 'antd/lib/icon';
-import moment from 'moment';
-import Player from "../../redux/reducer/player";
+import _ from 'lodash';
+import {player, add_player, audio_control} from '../../redux/actions';
+import {connect} from 'react-redux';
+// import { message, Button } from 'antd';
+import Message from 'antd/lib/message';
+import Notification from 'antd/lib/notification';
+import Button from 'antd/lib/button';
+import 'antd/lib/message/style/index.css';
+import 'antd/lib/button/style/index.css';
+import 'antd/lib/notification/style/index.css';
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_gc5awkku4zq.js',
 });
-// import Player from "../../redux/reducer/player";
 
-export default class Home extends Component {
+class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -164,7 +171,28 @@ export default class Home extends Component {
                 page: 1,
             }
         }).then(res => {
-            console.log(res);
+            console.log(res.data.data.data);
+            let data = res.data.data.data[0];
+            let items = {
+                singId: data.songid,
+                singPic: data.pic,
+                singAuthor: data.author,
+                singLrc: data.lrc,
+                singUrl: data.url,
+                singTitle: data.title,
+            };
+            this.props.addPlayer(items);
+            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+                this.props.addPlayerList(items);
+            }
+            this.props.changeControl({
+                isPlayer: true,
+            });
+            Notification.open({
+                message: 'Hi',
+                description: `${items.singTitle} 准备播放~~`,
+                icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
+            });
         }).catch(err => {
             console.log(err);
         })
@@ -512,6 +540,17 @@ export default class Home extends Component {
         )
     }
 }
+const mapStateToProps = state => ({
+    playerList: state.Player.list,
+});
+const mapDispatchToProps = dispatch => ({
+    addPlayer: item => dispatch(player(item)),
+    addPlayerList: item => dispatch(add_player(item)),
+    // deleteItem: item => dispatch(deleteItem(item)),
+    // addAudio: item => dispatch(audio_player(item)),
+    changeControl: item => dispatch(audio_control(item))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Main)
 const styles = StyleSheet.create({
     container: {
         width: '1000px',
