@@ -16,7 +16,7 @@ import 'antd/lib/message/style/index.css';
 import 'antd/lib/button/style/index.css';
 import 'antd/lib/notification/style/index.css';
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_gc5awkku4zq.js',
+    scriptUrl: '//at.alicdn.com/t/font_862212_9vv1j1sakel.js'
 });
 
 class Main extends Component {
@@ -163,7 +163,7 @@ class Main extends Component {
         console.log(val);
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/searchname',
+            url: 'http://192.168.254.103:20200/v1/music/search',
             data: {
                 search: val.mid,
                 filter: 'id',

@@ -5,7 +5,8 @@ const initialState = {
     time: {},
     // isPlay: false,
     // playIndex: 0,
-    control: {}
+    control: {},
+    status: false,
 };
 const Player = (state = initialState, action) => {
     // console.log(action.item);
@@ -62,16 +63,15 @@ const Player = (state = initialState, action) => {
             return Object.assign({}, state, {
                 control: {
                     isPlay: action.item.isPlay !== undefined ? action.item.isPlay : true ,
-                    // playIndex: action.item.playIndex !== undefined ? action.item.playIndex: state.control.playIndex,
                 }
             });
         case 'PLAYINDEX':
             return Object.assign({}, state, {
                 playIndex: action.playIndex
             });
-        case 'ISPLAY':
+        case 'PLAYSTATUS':
             return Object.assign({}, state, {
-                isPlay: action.isPlay
+                status: action.item.status
             });
         default:
             return state

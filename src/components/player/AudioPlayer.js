@@ -15,7 +15,7 @@ class AudioPlayer extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // console.log(this.props.playerData.control);
+        // console.log(this.props.playerData);
         // console.log(prevState);
         if (prevProps.playerData.control.isPlay !== this.props.playerData.control.isPlay) {
             this.setState({
@@ -24,13 +24,28 @@ class AudioPlayer extends Component {
                 console.log(this.state.isPlay);
                 if(this.state.isPlay) {
                     setTimeout(() => {
-                        this.player.play();
+                        this.state.singUrl && this.player.play();
                     }, 30)
                 } else {
                     setTimeout(() => {
-                        this.player.pause();
+                        this.state.singUrl && this.player.pause();
                     }, 30)
                 }
+            })
+        }
+        if (this.props.playerData.player.singId !== prevState.singId) {
+            setTimeout(() => {
+                this.player.currentTime = 0;
+            }, 30)
+        } else {
+            if(this.props.playerData.time.currentTime && this.player.currentTime !== this.props.playerData.time.currentTime) {
+                this.player.currentTime = this.props.playerData.time.currentTime
+            }
+        }
+        if (this.props.playerData.status !== this.state.isLoop) {
+            console.log(this.props.playerData.status);
+            this.setState({
+                isLoop: !this.state.isLoop
             })
         }
     }
@@ -38,8 +53,8 @@ class AudioPlayer extends Component {
     componentDidMount() {}
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        console.log(nextProps);
-        console.log(prevState);
+        // console.log(nextProps);
+        // console.log(prevState);
         if (nextProps.playerData.player.singUrl !== prevState.singUrl ||
             nextProps.playerData.player.singId !== prevState.singId) {
             return {

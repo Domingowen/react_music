@@ -4,8 +4,7 @@ const ADD_PLAYER = 'ADD_PLAYER';
 const AUDIO = 'AUDIO';
 const CONTROL = 'CONTROL';
 const TIME = 'TIME';
-const ISPLAY = 'ISPLAY';
-const PLAYINDEX = 'PLAYINDEX';
+const PLAYSTATUS = 'PLAYSTATUS';
 export function player (item) {
     return {
         type: PLAYER,
@@ -39,6 +38,12 @@ export function audio_control (item) {
 export function player_time (item) {
     return {
         type: TIME,
+        item
+    }
+}
+export function player_status (item) {
+    return {
+        type: PLAYSTATUS,
         item
     }
 }

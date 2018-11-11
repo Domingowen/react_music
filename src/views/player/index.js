@@ -1,14 +1,18 @@
 import React, {Component} from 'react';
 import {StyleSheet, css}from 'aphrodite';
 import {connect} from 'react-redux';
-import {player, audio_player, audio_control} from '../../redux/actions';
+import {player, audio_player, audio_control, player_time, player_status} from '../../redux/actions';
+import Icon from 'antd/lib/icon';
 import musicPic from '../../assets/music_bg.png';
 import musicPic2 from '../../assets/music_bg2.png';
 import musicPic3 from '../../assets/music_bg3.png';
-import Progress from 'antd/lib/progress';
-import 'antd/lib/progress/style/index.css';
 import moment from 'moment';
 import _ from 'lodash';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+const IconFont = Icon.createFromIconfontCN({
+    scriptUrl: '//at.alicdn.com/t/font_862212_83t0djzvhln.js'
+});
 class Player extends Component{
     constructor(props) {
         super(props);
@@ -25,6 +29,7 @@ class Player extends Component{
             singId: '',
             progress: 0,
             showSingLrc: [],
+            singStatus: false
         }
     }
     play () {
@@ -46,6 +51,13 @@ class Player extends Component{
     prevSing () {
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
         console.log(index);
+        // this.setState({
+        //     isPlay: true
+        // });
+        // this.props.changeControl({
+        //     isPlay: true,
+        // });
+        !this.state.isPlay &&this.play();
         if (index > 0) {
             this.props.changePlayer(this.state.playList[index - 1]);
         } else {
@@ -54,6 +66,13 @@ class Player extends Component{
     }
     nextSing () {
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
+        // this.setState({
+        //     isPlay: true
+        // });
+        // this.props.changeControl({
+        //     isPlay: true,
+        // });
+        !this.state.isPlay &&this.play();
         console.log(index);
         if (this.state.playList.length - 1 > index) {
             this.props.changePlayer(this.state.playList[index + 1]);
@@ -106,7 +125,7 @@ class Player extends Component{
             durationTime = audio.durationTime ? audio.durationTime : 0;
         }
         if (playerData.player.singId && playerData.player.singId !== prevState.singId) {
-            singPic = playerData.player.singPic;
+            singPic = playerData.player.singPic ? playerData.player.singPic : musicPic3;
             singLrc = playerData.player.singLrc.split('\n');
             singAuthor = playerData.player.singAuthor;
             singTitle = playerData.player.singTitle;
@@ -144,6 +163,32 @@ class Player extends Component{
         // this.setState({
         //     progress: Math.round(progress)
         // })
+    }
+    playerSliderChange(value) {
+        let currentTime = parseInt((value / 100) * this.state.durationTime);
+        let progress = (currentTime / this.state.durationTime) * 100;
+        console.log(progress);
+        console.log(currentTime);
+        this.props.playerTime(Object.assign({}, this.props.playerData.time, {
+            currentTime: currentTime
+        }))
+    }
+    playerSliderAfterChange (value) {
+
+        // console.log(value);
+        // this.setState({
+        //     progress: value
+        // })
+    }
+    playerStatus () {
+        this.setState({
+            singStatus: !this.state.singStatus
+        }, () => {
+            console.log(this.state.singStatus);
+            this.props.playerStatus({
+                status: this.state.singStatus
+            })
+        })
     }
     timeFormat(time) {
         let hour = parseInt(time / 3600);
@@ -194,15 +239,16 @@ class Player extends Component{
     lrcTimeSelect () {
 
     }
+    imgOnError () {
+        console.log('图片出错');
+        this.playerImg.src = musicPic3;
+    }
+    playerImg = null;
     render () {
         let currentTime = this.timeFormat(this.state.currentTime);
         let durationTime = this.timeFormat(this.state.durationTime);
-        let progress = Math.round((this.state.currentTime / this.state.durationTime) * 100);
-        // console.log(moment(this.state.currentTime).get('millisecond'));
-        // console.log(moment(81480/ 1000).get('millisecond'));
-        // console.log(moment().millisecond());
-        // console.log(moment.unix(81480));
-        // console.log(this.state.currentTime)
+        let progress = this.state.durationTime > 0 ? (this.state.currentTime / this.state.durationTime) * 100 : 0;
+        // console.log(progress);
         return (
             <div className={css(styles.container)}>
                 <div className={css(styles.container_left)}>
@@ -210,21 +256,21 @@ class Player extends Component{
                     <div className={css(styles.container_list)}>
                         <span className={css(styles.list_sing)}>歌曲</span>
                         <span className={css(styles.list_singer)}>歌手</span>
-                        <span className={css(styles.list_player)}>操作</span>
+                        {/*<span className={css(styles.list_player)}>操作</span>*/}
                     </div>
                     <ul>
                         {this.state.playList.map((val, index) => {
                             return <li className={css(styles.player_list)} key={index}>
                                 <span className={css(styles.list_sing)}>{val.singTitle}</span>
                                 <span className={css(styles.list_singer)}>{val.singAuthor}</span>
-                                <span className={css(styles.list_player)} onClick={this.playListSing.bind(this, val)}>播放</span>
+                                {/*<span className={css(styles.list_player)} onClick={this.playListSing.bind(this, val)}>播放</span>*/}
                             </li>
                         })}
                     </ul>
                 </div>
                 <div className={css(styles.container_right)}>
                     <div className={css(styles.singImg)}>
-                        <img className={css(styles.img)} src={this.state.singPic} alt=""/>
+                        <img className={css(styles.img)} src={this.state.singPic} alt="" onError={this.imgOnError.bind(this)} ref={(val) => this.playerImg = val}/>
                     </div>
                     <div className={css(styles.singAuthor)}>
                         <span>{this.state.singTitle}</span>
@@ -238,26 +284,43 @@ class Player extends Component{
                             })}
                         </ul>
                     </div>
-                    <div className={css(styles.singTip)}>
-                        音乐解析需要几秒时间，然后就会自动播放啦~
-                    </div>
+                    {/*<div className={css(styles.singTip)}>*/}
+                        {/*音乐解析需要几秒时间，然后就会自动播放啦~*/}
+                    {/*</div>*/}
                 </div>
                 <div className={css(styles.player)}>
                     <div className={css(styles.playerProgress)}>
                         <div className={css(styles.time)}>{currentTime}</div>
                         <div className={css(styles.singRange)}>
-                            <Progress strokeWidth={5}  percent={progress} showInfo={false} />
+                            <Slider
+                                style={
+                                    {cursor: 'pointer'}
+                                }
+                                value={progress}
+                                trackStyle={[{backgroundColor: '#31c27c'}]}
+                                railStyle={{backgroundColor: '#ccc'}}
+                                onAfterChange={this.playerSliderAfterChange.bind(this)}
+                                onChange={this.playerSliderChange.bind(this)}
+                                // handleStyle={[{backgroundColor: '#31c27c'}]}
+                                // dotStyle={{backgroundColor: '#ccc'}}
+                                // activeDotStyle={{backgroundColor: '#31c27c', color: '#31c27c'}}
+                            />
                         </div>
                         <div className={css(styles.time)}>{durationTime}</div>
                     </div>
                     <div className={css(styles.playerControl)}>
-                        <span className={css(styles.playerPrev) + ' ' + 'iconfont icon-shangyishou'} onClick={this.prevSing.bind(this)}></span>
-                        {this.state.isPlay ?
-                            <span className={css(styles.playerPlay) + ' ' + 'iconfont icon-zanting'} onClick={this.play.bind(this)}></span>
+                        {this.state.singStatus ?
+                            <IconFont type="icon-danquxunhuan2" className={css(styles.playerStatus)} onClick={this.playerStatus.bind(this)}/>
                             :
-                            <span className={css(styles.playerPlay) + ' ' + 'iconfont icon-bofang'} onClick={this.play.bind(this)}></span>
+                            <IconFont type="icon-liebiaoxunhuan" className={css(styles.playerStatus)} onClick={this.playerStatus.bind(this)}/>
                         }
-                        <span className={css(styles.playerNext) + ' ' + 'iconfont icon-xiayishou'} onClick={this.nextSing.bind(this)}/>
+                        <IconFont type="icon-shangyishou1" className={css(styles.playerIcon)} onClick={this.prevSing.bind(this)}/>
+                        {this.state.isPlay ?
+                            <IconFont type="icon-g-status-zanting" className={css(styles.playerIcon)} onClick={this.play.bind(this)}/>
+                            :
+                            <IconFont type="icon-bofang4" className={css(styles.playerIcon)} onClick={this.play.bind(this)}/>
+                        }
+                        <IconFont type="icon-xiayishou3" className={css(styles.playerIcon)} onClick={this.nextSing.bind(this)}/>
                     </div>
                 </div>
             </div>
@@ -270,7 +333,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     changePlayer: item => dispatch(player(item)),
     changeAudio: item => dispatch(audio_player(item)),
-    changeControl: item => dispatch(audio_control(item))
+    changeControl: item => dispatch(audio_control(item)),
+    playerTime: item => dispatch(player_time(item)),
+    playerStatus: item => dispatch(player_status(item)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Player)
 const styles = StyleSheet.create({
@@ -367,36 +432,35 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '400px',
-        margin: '0 auto'
+        margin: '0 auto',
+        position: 'relative',
     },
-    playerPrev: {
-        fontSize: '34px',
+    playerIcon: {
+        fontSize: '50px',
         color: '#31c27c',
         cursor: 'pointer'
     },
-    playerNext: {
-        fontSize: '34px',
-        color: '#31c27c',
-        cursor: 'pointer'
-    },
-    playerPlay: {
+    playerStatus: {
         fontSize: '30px',
         color: '#31c27c',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        position: 'absolute',
+        left: '-200px',
     },
     playerProgress: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '70px'
+        height: '70px',
+        // padding: '0 20px'
     },
     playerRight: {
 
     },
     singRange: {
         // flex: 1,
-        width: '800px',
-        padding: '0 10px'
+        width: '780px',
+        padding: '0 10px 3px',
     },
     range: {
         width: '100%'

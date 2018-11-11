@@ -44,10 +44,10 @@ class Search extends Component{
         // console.log(_.uniqBy(this.props.playerList, 'singId'));
         // console.log(_.findIndex(this.props.playerList, {singId: item.songid}));
         if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-            this.props.addPlayer(items);
+            this.props.addPlayerList(items);
         }
         this.props.player(items);
-        this.props.addAudio(items);
+        // this.props.addAudio(items);
         this.props.changeAudioControl({
             isPlayer: true,
         });
@@ -74,7 +74,7 @@ class Search extends Component{
     getData () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/searchname',
+            url: 'http://192.168.254.103:20200/v1/music/search',
             data: {
                 search: this.state.text,
                 filter: this.state.filter,
@@ -175,9 +175,9 @@ const mapStateToProps = state => ({
     playerList: state.Player.list
 });
 const mapDispatchToProps = dispatch => ({
-    addPlayer: item => dispatch(add_player(item)),
+    addPlayerList: item => dispatch(add_player(item)),
     player: item => dispatch(player(item)),
-    addAudio: item => dispatch(audio_player(item)),
+    // addAudio: item => dispatch(audio_player(item)),
     changeAudioControl: item => dispatch(audio_control(item))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Search)
