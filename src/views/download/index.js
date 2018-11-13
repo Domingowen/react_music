@@ -4,7 +4,7 @@ export default class DownLoad extends Component{
     render () {
         return (
             <div className={css(styles.container)}>
-                IOS和安卓即将上线
+                iOS和安卓即将上线
             </div>
         )
     }

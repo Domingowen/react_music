@@ -147,7 +147,9 @@ class Main extends Component {
         this.props.history.push({
             pathname: '/home/detail',
             state: {
-                item: val
+                item: val,
+                type: 'rec'
+
             }
         })
     }
@@ -157,15 +159,64 @@ class Main extends Component {
     }
     handleDetailSingAlbum (val) {
         console.log(val);
+        this.props.history.push({
+            pathname: '/home/detail',
+            state: {
+                item: val,
+                type: 'album'
+            }
+        })
         // this.props.history.push("/home/detail")
     }
     handlePlayNewSong (val) {
         console.log(val);
+        const hide = Message.loading('正在请求音乐数据..', 0);
         axios({
             method: 'post',
             url: 'http://192.168.254.103:20200/v1/music/search',
             data: {
                 search: val.mid,
+                filter: 'id',
+                type: 'qq',
+                page: 1,
+            }
+        }).then(res => {
+            console.log(res.data.data.data);
+            setTimeout(hide, 100);
+            let data = res.data.data.data[0];
+            let items = {
+                singId: data.songid,
+                singPic: data.pic,
+                singAuthor: data.author,
+                singLrc: data.lrc,
+                singUrl: data.url,
+                singTitle: data.title,
+            };
+            this.props.addPlayer(items);
+            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+                this.props.addPlayerList(items);
+            }
+            this.props.changeControl({
+                isPlayer: true,
+            });
+            // Notification.open({
+            //     message: 'Hi',
+            //     description: `${items.singTitle} 准备播放~~`,
+            //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
+            // });
+            Message.success(`${items.singTitle}，准备播放`)
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+    handlePlayPopularSong (val) {
+        console.log(val);
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/search',
+            data: {
+                search: val.data.songmid,
                 filter: 'id',
                 type: 'qq',
                 page: 1,
@@ -188,11 +239,12 @@ class Main extends Component {
             this.props.changeControl({
                 isPlayer: true,
             });
-            Notification.open({
-                message: 'Hi',
-                description: `${items.singTitle} 准备播放~~`,
-                icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
-            });
+            // Notification.open({
+            //     message: 'Hi',
+            //     description: `${items.singTitle} 准备播放~~`,
+            //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
+            // });
+            Message.success(`${items.singTitle}，准备播放`)
         }).catch(err => {
             console.log(err);
         })
@@ -461,7 +513,7 @@ class Main extends Component {
                         </div>
                         <ul>
                             {this.state.topSingList.pop.length > 0 ? this.state.topSingList.pop.map((val, index) => {
-                                return <li className={css(styles.rank_item)} key={index}>
+                                return <li className={css(styles.rank_item)} key={index} onClick={this.handlePlayPopularSong.bind(this,val)}>
                                     <div>{index + 1}</div>
                                     <div className={css(styles.rank_txt)}>
                                         <span style={{paddingBottom: '10px'}}>{val.data.songname}</span>
@@ -477,7 +529,7 @@ class Main extends Component {
                         </div>
                         <ul>
                             {this.state.topSingList.hot.length > 0 ? this.state.topSingList.hot.map((val, index) => {
-                                return <li className={css(styles.rank_item)} key={index}>
+                                return <li className={css(styles.rank_item)} key={index} onClick={this.handlePlayPopularSong.bind(this,val)}>
                                     <div>{index + 1}</div>
                                     <div className={css(styles.rank_txt)}>
                                         <span style={{paddingBottom: '10px'}}>{val.data.songname}</span>
@@ -493,7 +545,7 @@ class Main extends Component {
                         </div>
                         <ul>
                             {this.state.topSingList.newSing.length > 0 ? this.state.topSingList.newSing.map((val, index) => {
-                                return <li className={css(styles.rank_item)} key={index}>
+                                return <li className={css(styles.rank_item)} key={index} onClick={this.handlePlayPopularSong.bind(this,val)}>
                                     <div>{index + 1}</div>
                                     <div className={css(styles.rank_txt)}>
                                         <span style={{paddingBottom: '10px'}}>{val.data.songname}</span>
@@ -509,7 +561,7 @@ class Main extends Component {
                         </div>
                         <ul>
                             {this.state.topSingList.europe.length > 0 ? this.state.topSingList.europe.map((val, index) => {
-                                return <li className={css(styles.rank_item)} key={index}>
+                                return <li className={css(styles.rank_item)} key={index} onClick={this.handlePlayPopularSong.bind(this,val)}>
                                     <div>{index + 1}</div>
                                     <div className={css(styles.rank_txt)}>
                                         <span style={{paddingBottom: '10px'}}>{val.data.songname}</span>
@@ -525,7 +577,7 @@ class Main extends Component {
                         </div>
                         <ul>
                             {this.state.topSingList.korean.length > 0 ? this.state.topSingList.korean.map((val, index) => {
-                                return <li className={css(styles.rank_item)} key={index}>
+                                return <li className={css(styles.rank_item)} key={index} onClick={this.handlePlayPopularSong.bind(this,val)}>
                                     <div>{index + 1}</div>
                                     <div className={css(styles.rank_txt)}>
                                         <span style={{paddingBottom: '10px'}}>{val.data.songname}</span>
@@ -581,7 +633,8 @@ const styles = StyleSheet.create({
     },
     carousel_container: {
         position: 'relative',
-        minHeight: '200px'
+        minHeight: '200px',
+        // overflow: hidden,
     },
     carousel_recommend_container: {
         height: '100%',
@@ -615,7 +668,8 @@ const styles = StyleSheet.create({
         marginTop: '10px',
     },
     carousel_list: {
-        height: '100%'
+        height: '100%',
+        overflow: 'hidden',
     },
     carousel_btn_left: {
         position: 'absolute',

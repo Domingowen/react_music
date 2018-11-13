@@ -3,6 +3,8 @@ import {StyleSheet, css}from 'aphrodite';
 import {connect} from 'react-redux';
 import {player, deleteItem, audio_player, audio_control} from '../../redux/actions';
 import Icon from 'antd/lib/icon';
+import Message from 'antd/lib/message';
+import 'antd/lib/message/style/index.css';
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_4k7vimuo3l6.js'
 });
@@ -54,15 +56,16 @@ class List extends Component{
         console.log(item);
         console.log(index);
         this.props.addPlayer(item);
-        this.props.addAudio(item);
-        // this.props.changeControl({
-        //     isPlay: true,
-        //     playIndex: index
-        // })
+        // this.props.addAudio(item);
+        Message.success(`${item.singTitle}，准备播放`);
+        this.props.changeControl({
+            isPlay: true,
+        });
     }
     deleteItem (item) {
         console.log(item);
         this.props.deleteItem(item);
+        Message.warn(`${item.singTitle}，已移出播放列表`);
     }
 }
 const mapStateToProps = state => ({
@@ -71,7 +74,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     addPlayer: item => dispatch(player(item)),
     deleteItem: item => dispatch(deleteItem(item)),
-    addAudio: item => dispatch(audio_player(item)),
+    // addAudio: item => dispatch(audio_player(item)),
     changeControl: item => dispatch(audio_control(item))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(List)
@@ -111,6 +114,9 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         marginTop: '10px',
+        ':hover': {
+            color: '#31c27c'
+        },
         ':hover .item_play': {
             display: 'block'
         }

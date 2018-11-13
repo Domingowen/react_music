@@ -1,10 +1,8 @@
 const initialState = {
     list: [],
     player: {},
-    audio: {},
+    // audio: {},
     time: {},
-    // isPlay: false,
-    // playIndex: 0,
     control: {},
     status: false,
 };
@@ -43,15 +41,16 @@ const Player = (state = initialState, action) => {
         case 'AUDIO':
             // console.log(action.item);
             // console.log(state.list);
-            return Object.assign({}, state, {
-                audio: {
-                    singId: action.item.singId ? action.item.singId : null,
-                    singUrl: action.item.singUrl ? action.item.singUrl : null,
-                    // currentTime: action.item.currentTime,
-                    // durationTime: action.item.durationTime,
-                    playList: state.list,
-                }
-            });
+            // return Object.assign({}, state, {
+            //     audio: {
+            //         singId: action.item.singId ? action.item.singId : null,
+            //         singUrl: action.item.singUrl ? action.item.singUrl : null,
+            //         // currentTime: action.item.currentTime,
+            //         // durationTime: action.item.durationTime,
+            //         playList: state.list,
+            //     }
+            // });
+            break;
         case 'TIME':
             return Object.assign({}, state, {
                 time: {
@@ -66,9 +65,10 @@ const Player = (state = initialState, action) => {
                 }
             });
         case 'PLAYINDEX':
-            return Object.assign({}, state, {
-                playIndex: action.playIndex
-            });
+            // return Object.assign({}, state, {
+            //     playIndex: action.playIndex
+            // });
+            break;
         case 'PLAYSTATUS':
             return Object.assign({}, state, {
                 status: action.item.status

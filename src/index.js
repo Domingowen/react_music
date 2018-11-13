@@ -5,11 +5,11 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {Provider} from 'react-redux';
 import rootReducer from './redux/reducer/';
-import {createStore} from 'redux';
-import {createLogger} from 'redux-logger'
+import {createStore, applyMiddleware, compose} from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension'
-const store = createStore(rootReducer, composeWithDevTools());
-const loggerMiddleware = createLogger({collapsed: true});
+// import {createLogger} from 'redux-logger';
+// const loggerMiddleware = createLogger({collapsed: true});
+const store = createStore(rootReducer, compose(composeWithDevTools()));
 
 ReactDOM.render(
     <Provider store={store}>

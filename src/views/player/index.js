@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, css}from 'aphrodite';
 import {connect} from 'react-redux';
-import {player, audio_player, audio_control, player_time, player_status} from '../../redux/actions';
+import {player, audio_player, audio_control, player_time, player_status, deleteItem} from '../../redux/actions';
 import Icon from 'antd/lib/icon';
 import musicPic from '../../assets/music_bg.png';
 import musicPic2 from '../../assets/music_bg2.png';
@@ -11,7 +11,7 @@ import _ from 'lodash';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_83t0djzvhln.js'
+    scriptUrl: '//at.alicdn.com/t/font_862212_heepzwrlzhf.js'
 });
 class Player extends Component{
     constructor(props) {
@@ -66,12 +66,6 @@ class Player extends Component{
     }
     nextSing () {
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
-        // this.setState({
-        //     isPlay: true
-        // });
-        // this.props.changeControl({
-        //     isPlay: true,
-        // });
         !this.state.isPlay &&this.play();
         console.log(index);
         if (this.state.playList.length - 1 > index) {
@@ -80,15 +74,13 @@ class Player extends Component{
             this.props.changePlayer(this.state.playList[0]);
         }
     }
-    playListSing (item) {
+    startPlay (item) {
         this.props.changePlayer(item);
     }
-    // componentWillReceiveProps (nextProps, nextState) {
-    //     console.log(nextProps);
-    //     console.log(nextState);
-    // }
+    deletePlay (item) {
+        this.props.deletePlayer(item);
+    }
     componentDidMount () {
-        // console.log(this.props.playerData.control.isPlay);
         this.formatSingLrc();
         this.setState({
             isPlay: this.props.playerData.control.isPlay
@@ -131,8 +123,14 @@ class Player extends Component{
             singTitle = playerData.player.singTitle;
             singId = playerData.player.singId;
         }
-        if (playerData.list.length !== prevState.playList.length) {
-            playList= playerData.list
+        if (playerData.list.length !== playList.length) {
+            playerData.list.forEach(val => {
+                val.singId === singId ? val.playStatus = true : val.playStatus = false;
+            });
+            console.log(_.filter(playerData.list, {singId: singId}));
+
+            playList= playerData.list;
+            console.log(playList);
         }
         return {
             currentTime: currentTime,
@@ -263,7 +261,13 @@ class Player extends Component{
                             return <li className={css(styles.player_list)} key={index}>
                                 <span className={css(styles.list_sing)}>{val.singTitle}</span>
                                 <span className={css(styles.list_singer)}>{val.singAuthor}</span>
-                                {/*<span className={css(styles.list_player)} onClick={this.playListSing.bind(this, val)}>播放</span>*/}
+                                {
+                                    val.playStatus ?
+                                        <IconFont className={css(styles.list_player) + ' list_player'} type="icon-zanting9" onClick={this.startPlay.bind(this, val)}/>
+                                        :
+                                        <IconFont className={css(styles.list_player) + ' list_player'} type="icon-zanting8" onClick={this.startPlay.bind(this, val)}/>
+                                }
+                                <IconFont className={css(styles.list_player) + ' list_player'} type="icon-shanchu2" onClick={this.deletePlay.bind(this, val)}/>
                             </li>
                         })}
                     </ul>
@@ -336,6 +340,7 @@ const mapDispatchToProps = dispatch => ({
     changeControl: item => dispatch(audio_control(item)),
     playerTime: item => dispatch(player_time(item)),
     playerStatus: item => dispatch(player_status(item)),
+    deletePlayer: item => dispatch(deleteItem(item))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Player)
 const styles = StyleSheet.create({
@@ -343,10 +348,10 @@ const styles = StyleSheet.create({
         width: '1000px',
         margin: '0 auto',
         display: 'flex',
-
+        // paddingBottom: '30px'
     },
     container_left: {
-        width: '490px',
+        width: '590px',
         height: '450px',
         marginTop: '10px',
         paddingLeft: '10px',
@@ -354,7 +359,7 @@ const styles = StyleSheet.create({
         overflowX: 'hidden',
     },
     container_right: {
-        width: '500px',
+        width: '400px',
         height: '450px',
         // borderLeft: '1px solid rgba(255,255,255, 0.4)'
     },
@@ -373,25 +378,42 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'sticky',
         top: '30px',
-        backgroundColor: '#f1f1f1'
+        backgroundColor: '#f1f1f1',
+        // paddingBottom: '10px',
         // position: '-webkit-sticky',
     },
     player_list: {
         display: 'flex',
         alignItems: 'center',
-        // paddingBottom: '10px',
         height: '50px',
+        ':hover': {
+            color: '#31c27c'
+        },
+        ':hover .list_player': {
+            display: 'block',
+        }
         // borderBottom: '1px solid rgba(255,255,255, 0.4)'
     },
     list_sing: {
-        width: '200px',
+        width: '180px',
+        paddingRight: '20px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
     },
     list_singer: {
         width: '200px'
     },
     list_player: {
-        width: '100px',
-        cursor: 'pointer'
+        // width: '100px',
+        display: 'none',
+        cursor: 'pointer',
+        color: '#777',
+        fontSize: '32px',
+        marginRight: '10px',
+        ':hover': {
+            color: '#31c27c'
+        }
     },
     singImg: {
         // width: '500px',
@@ -422,7 +444,7 @@ const styles = StyleSheet.create({
     },
     player: {
         position: 'fixed',
-        bottom: '40px',
+        bottom: '20px',
         left: 0,
         right: 0,
         minWidth: '1000px'

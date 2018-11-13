@@ -5,10 +5,11 @@ import {connect} from 'react-redux';
 import {add_player, player, audio_player, audio_control} from '../../redux/actions';
 import _ from 'lodash';
 import Spin from 'antd/lib/spin';
-import Alert from 'antd/lib/alert';
+import Message from 'antd/lib/message';
 import 'antd/lib/spin/style/index.css';
-import 'antd/lib/alert/style/index.css';
+import 'antd/lib/message/style/index.css';
 import Icon from 'antd/lib/icon';
+
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_4865y8hzytg.js'
 });
@@ -22,6 +23,7 @@ class Search extends Component{
             type: 'qq',
             page: 1,
             isLoading: false,
+            searchResult: 0
         }
     }
     searchText (e) {
@@ -43,6 +45,7 @@ class Search extends Component{
             this.props.addPlayerList(items);
         }
         this.props.player(items);
+        Message.success(`${items.singTitle}，准备播放`);
         this.props.changeAudioControl({
             isPlayer: true,
         });
@@ -74,6 +77,9 @@ class Search extends Component{
         };
         if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
             this.props.addPlayerList(items);
+            Message.success(`${items.singTitle}，已添加到播放列表`, 1);
+        } else {
+            Message.error(`${items.singTitle}，已在播放列表中`, 1);
         }
     }
     getData () {
@@ -123,7 +129,8 @@ class Search extends Component{
                this.getData();
            })
         } else {
-            alert('请输入歌名或者歌手')
+            // alert('')
+            Message.error(`请输入歌名或者歌手中`, 1);
         }
     }
     enterBtn(e) {
