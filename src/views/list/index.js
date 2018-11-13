@@ -2,6 +2,10 @@ import React, {Component} from 'react';
 import {StyleSheet, css}from 'aphrodite';
 import {connect} from 'react-redux';
 import {player, deleteItem, audio_player, audio_control} from '../../redux/actions';
+import Icon from 'antd/lib/icon';
+const IconFont = Icon.createFromIconfontCN({
+    scriptUrl: '//at.alicdn.com/t/font_862212_4k7vimuo3l6.js'
+});
 class List extends Component{
     constructor (props) {
         super(props);
@@ -16,7 +20,7 @@ class List extends Component{
                         <span className={css(styles.title_song)}>歌曲</span>
                         <span className={css(styles.title_singer)}>歌手</span>
                         <span className={css(styles.title_album)}>专辑图片</span>
-                        <span className={css(styles.title_control)}>操作</span>
+                        {/*<span className={css(styles.title_control)}>操作</span>*/}
                     </div>
                     : null
                 }
@@ -29,8 +33,14 @@ class List extends Component{
                                 <div className={css(styles.item_singer)}>{val.singAuthor}</div>
                                 <img className={css(styles.item_img)} src={val.singPic} alt=""/>
                                 <div className={css(styles.item_control)}>
-                                    <span style={{marginRight: '20px', cursor: 'pointer'}} onClick={this.play.bind(this, val, index)}>播放</span>
-                                    <span style={{cursor: 'pointer'}} onClick={this.deleteItem.bind(this, val)}>删除</span>
+                                    {/*<span style={{marginRight: '20px', cursor: 'pointer'}} onClick={this.play.bind(this, val, index)}>播放</span>*/}
+                                    {/*<span style={{cursor: 'pointer'}} onClick={this.deleteItem.bind(this, val)}>删除</span>*/}
+                                    {val.isPlay ?
+                                        <IconFont type="icon-zanting9" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
+                                        :
+                                        <IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
+                                    }
+                                    <IconFont type="icon-shanchu2" className={css(styles.item_play) + ' item_play'} onClick={this.deleteItem.bind(this, val)}/>
                                 </div>
                             </li>
                         })
@@ -100,7 +110,10 @@ const styles = StyleSheet.create({
     item: {
         display: 'flex',
         alignItems: 'center',
-        marginTop: '10px'
+        marginTop: '10px',
+        ':hover .item_play': {
+            display: 'block'
+        }
     },
     item_song: {
         width: '400px',
@@ -113,8 +126,22 @@ const styles = StyleSheet.create({
         height: '80px',
 
     },
+    item_play: {
+        // width: '200px',
+        textAlign: 'center',
+        color: '#777',
+        fontSize: '36px',
+        marginRight: '15px',
+        display: 'none',
+        cursor: 'pointer',
+        ':hover': {
+            color: '#31c27c'
+        }
+    },
     item_control: {
         width: '200px',
         textAlign: 'center',
+        display: 'flex',
+        justifyContent: 'center'
     }
 });

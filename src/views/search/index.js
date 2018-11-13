@@ -8,6 +8,10 @@ import Spin from 'antd/lib/spin';
 import Alert from 'antd/lib/alert';
 import 'antd/lib/spin/style/index.css';
 import 'antd/lib/alert/style/index.css';
+import Icon from 'antd/lib/icon';
+const IconFont = Icon.createFromIconfontCN({
+    scriptUrl: '//at.alicdn.com/t/font_862212_4865y8hzytg.js'
+});
 class Search extends Component{
     constructor(props) {
         super(props);
@@ -35,19 +39,10 @@ class Search extends Component{
             singUrl: item.url,
             singTitle: item.title
         };
-        // console.log(item);
-        // console.log(this.props.playerList);
-        // console.log(_.uniqWith(this.props.playerList, _.isEqual));
-        // console.log(_.union(this.props.playerList, item));
-        // console.log(_.uniq(this.props.playerList));
-        // console.log(_.indexOf(this.props.playerList));
-        // console.log(_.uniqBy(this.props.playerList, 'singId'));
-        // console.log(_.findIndex(this.props.playerList, {singId: item.songid}));
         if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
             this.props.addPlayerList(items);
         }
         this.props.player(items);
-        // this.props.addAudio(items);
         this.props.changeAudioControl({
             isPlayer: true,
         });
@@ -63,13 +58,23 @@ class Search extends Component{
                 })
             }
         });
-        // console.log(searchList);
-        // alert('音乐准备播放');
         console.log(this.props);
         this.setState({
             searchList: searchList
         })
-        // console.log(this.props.playerList);
+    }
+    add (item) {
+        let items = {
+            singId: item.songid,
+            singPic: item.pic,
+            singAuthor: item.author,
+            singLrc: item.lrc,
+            singUrl: item.url,
+            singTitle: item.title
+        };
+        if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+            this.props.addPlayerList(items);
+        }
     }
     getData () {
         axios({
@@ -146,22 +151,23 @@ class Search extends Component{
                             <span className={css(styles.title_song)}>歌曲</span>
                             <span className={css(styles.title_singer)}>歌手</span>
                             <span className={css(styles.title_album)}>专辑图片</span>
-                            <span className={css(styles.title_control)}>操作</span>
+                            {/*<span className={css(styles.title_control)}>操作</span>*/}
                         </div> :
                         <div className={css(styles.list_empty)}>
                             🎧总有一首歌让你循环一整天
                         </div>
                     }
                     {this.state.searchList.map((val, index) => {
-                    return <div className={css(styles.list_item)} key={index} onClick={this.play.bind(this, val)}>
+                    return <div className={css(styles.list_item)} key={index}>
                             <span className={css(styles.item_song)}>{val.title}</span>
                             <span className={css(styles.item_singer)}>{val.author}</span>
                             <img className={css(styles.item_album)} src={val.pic} alt=""/>
                             {val.isPlay ?
-                                <span className={css(styles.item_play)+ ' ' + 'iconfont icon-zanting'}></span>
+                                <IconFont type="icon-zanting9" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
                                 :
-                                <span className={css(styles.item_play)+ ' ' + 'iconfont icon-bofang'}></span>
+                                <IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
                             }
+                            <IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.add.bind(this, val)}/>
                         </div>
                     })}
                     {this.state.searchList.length > 0 ? <span className={css(styles.getmore)} onClick={this.getMore.bind(this)}>加载更多</span>: null}
@@ -255,8 +261,10 @@ const styles = StyleSheet.create({
     list_item: {
         display: 'flex',
         alignItems: 'center',
-        cursor: 'pointer',
-        paddingTop: '10px'
+        paddingTop: '10px',
+        ':hover .item_play': {
+            display: 'block'
+        }
         // justifyContent: 'space-around'
     },
     item_song: {
@@ -268,12 +276,19 @@ const styles = StyleSheet.create({
     item_album: {
         width: '80px',
         height: '80px',
+        marginRight: '50px'
     },
     item_play: {
-        width: '200px',
+        // width: '200px',
         textAlign: 'center',
-        color: '#31c27c',
-        fontSize: '22px'
+        color: '#777',
+        fontSize: '36px',
+        marginRight: '15px',
+        display: 'none',
+        cursor: 'pointer',
+        ':hover': {
+            color: '#31c27c'
+        }
     },
     getmore: {
         width: '150px',
