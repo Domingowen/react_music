@@ -24,7 +24,7 @@ export default class Header extends Component {
 }
 const styles = StyleSheet.create({
     container: {
-        minWidth: '1000px',
+        minWidth: '1100px',
         backgroundColor: '#fff',
         height: '90px',
         position: 'relative',
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         // borderTopRightRadius: '5px',
     },
     header: {
-        width: '1000px',
+        width: '1100px',
         height: '100%',
         margin: '0 auto',
         borderBottom: '1px solid #f2f2f2',

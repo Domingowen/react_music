@@ -402,7 +402,8 @@ const styles = StyleSheet.create({
         whiteSpace: 'nowrap',
     },
     list_singer: {
-        width: '200px'
+        width: '200px',
+        paddingLeft: '50px'
     },
     list_player: {
         // width: '100px',

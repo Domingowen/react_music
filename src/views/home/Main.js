@@ -15,6 +15,8 @@ import Button from 'antd/lib/button';
 import 'antd/lib/message/style/index.css';
 import 'antd/lib/button/style/index.css';
 import 'antd/lib/notification/style/index.css';
+import HeadNav from './HeadNav.js';
+import RecommendList from './RecommendList.js';
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_9vv1j1sakel.js'
 });
@@ -46,53 +48,6 @@ class Main extends Component {
             },
 
         }
-    }
-    handleSelectRecommend (index, id) {
-        if (id === 0 ) {
-            axios({
-                method: 'post',
-                url: 'http://192.168.254.103:20200/v1/music/sing_recommend',
-                data: {
-                    id: id,
-                }
-            }).then((res) => {
-                let data = res.data.data.recomPlaylist.data.v_hot;
-                let recommend = [];
-                for(let i=0,len=10;i<len;i+=5){
-                    recommend.push(data.slice(i,i+5));
-                }
-                console.log(data);
-                this.setState({
-                    recommendPlay: recommend
-                })
-            }).catch((res) => {
-                console.log(res);
-            });
-        } else {
-            axios({
-                method: 'post',
-                url: 'http://192.168.254.103:20200/v1/music/sing_service',
-                data: {
-                    id: id,
-                }
-            }).then((res) => {
-                let data = res.data.data.playlist.data.v_playlist;
-                let recommend = [];
-                for(let i=0,len=10;i<len;i+=5){
-                    recommend.push(data.slice(i,i+5));
-                }
-                console.log(data);
-                this.setState({
-                    recommendPlay: recommend
-                })
-            }).catch((res) => {
-                console.log(res);
-            });
-        }
-
-        this.setState({
-            recommendSelect: index
-        })
     }
     handleSelectNewSing (index, id) {
         axios({
@@ -182,7 +137,7 @@ class Main extends Component {
             }
         }).then(res => {
             console.log(res.data.data.data);
-            setTimeout(hide, 100);
+
             let data = res.data.data.data[0];
             let items = {
                 singId: data.songid,
@@ -212,6 +167,7 @@ class Main extends Component {
 
     handlePlayPopularSong (val) {
         console.log(val);
+        const hide = Message.loading('正在请求音乐数据..', 0);
         axios({
             method: 'post',
             url: 'http://192.168.254.103:20200/v1/music/search',
@@ -223,6 +179,7 @@ class Main extends Component {
             }
         }).then(res => {
             console.log(res.data.data.data);
+            setTimeout(hide, 100);
             let data = res.data.data.data[0];
             let items = {
                 singId: data.songid,
@@ -367,51 +324,7 @@ class Main extends Component {
     render () {
         return (
             <div className={css(styles.container)}>
-                <div className={css(styles.title)}>
-                    歌单推荐
-                </div>
-                <ul className={css(styles.menu)}>
-                    {
-                        this.state.recommendList.map((val, index) => {
-                            return <li key={index} className={css(styles.menu_item, this.state.recommendSelect === index ? styles.menu_item_active : null)} onClick={this.handleSelectRecommend.bind(this, index, val.item_id)}>{val.item_name}</li>
-                        })
-                    }
-                </ul>
-                <div className={css(styles.carousel_container)}>
-                    {this.state.recommendPlay.length > 0 ?
-                        <Carousel
-                            ref={(el) => this.recommendCarousel = el}
-                            dots={true}
-                            autoplay={true}
-                            speed={500}
-                            autoplaySpeed={5000}
-                            className={css(styles.carousel_list)}>
-                            {
-                                this.state.recommendPlay.map((val, index) => {
-                                    return <div className={css(styles.carousel_recommend_container)} key={index}>
-                                        <ul className={css(styles.carousel_recommend_list)}>
-                                            {val.map((val, index) => {
-                                                return  <li className={css(styles.carousel_recommend_items)} key={index} onClick={this.handleDetailSingRecommend.bind(this, val)}>
-                                                    {   val.cover_url_big ?
-                                                        <img className={css(styles.carousel_rec_img)} src={val.cover_url_big} alt=""/> :
-                                                        <img className={css(styles.carousel_rec_img)} src={val.cover} alt=""/>
-                                                    }
-                                                    <span className={css(styles.carousel_rec_txt)}>{val.title}</span>
-                                                </li>
-                                            })}
-                                        </ul>
-                                    </div>
-                                })
-                            }
-                        </Carousel> : null
-                    }
-                    <div className={css(styles.carousel_btn_left)} onClick={() => {this.recommendCarousel.prev()}}>
-                        <IconFont type="icon-zuojiantou" />
-                    </div>
-                    <div className={css(styles.carousel_btn_right)} onClick={() => {this.recommendCarousel.next()}}>
-                        <IconFont type="icon-youjiantou" />
-                    </div>
-                </div>
+                <RecommendList IconFont={IconFont}/>
                 <div className={css(styles.title)}>
                     新歌首发
                 </div>
@@ -605,7 +518,7 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
 const styles = StyleSheet.create({
     container: {
-        width: '1000px',
+        // width: '1000px',
         margin: '0 auto',
     },
     title: {

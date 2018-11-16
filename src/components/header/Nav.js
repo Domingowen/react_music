@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {NavLink} from 'react-router-dom';
-import {StyleSheet, css} from 'aphrodite';
+import {StyleSheet, css} from 'aphrodite/no-important';
 export default class Nav extends Component {
     constructor(props) {
         super(props);
@@ -58,19 +58,31 @@ const styles = StyleSheet.create({
         height: '100%',
         display: 'flex',
         alignItems: 'center',
-        // backgroundColor: '#31c27c'
+        // color: '#000',
+        // ':hover':{
+            // backgroundColor: '#31c27c',
+            // color: '#31c27c'
+        // }
     },
     a: {
-        color: '#000',
+        // color: '#000',
         display: 'flex',
         alignItems: 'center',
         height: '100%',
         cursor: 'pointer',
         padding: '0 20px',
         fontSize: '18px',
+        ':hover':{
+            // backgroundColor: '#31c27c',
+            color: '#31c27c'
+        }
     },
     active: {
-        // backgroundColor: '#31c27c',
-        color: '#31c27c'
+        backgroundColor: '#31c27c',
+        color: '#fff',
+        ':hover':{
+            // backgroundColor: '#31c27c',
+            color: '#fff'
+        }
     }
 });
