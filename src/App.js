@@ -7,7 +7,6 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import {StyleSheet, css} from 'aphrodite';
 import RouteList from './router';
 import './assets/iconfont.css';
-import PlayerAudio from './components/player/AudioPlayer';
 
 class App extends Component {
     constructor (props) {
@@ -17,7 +16,7 @@ class App extends Component {
         return (
             <Router>
                 <div className="App">
-                    <PlayerAudio/>
+
                     <Header/>
                     <div className={css(styles.container)}>
                         {/*<div className={css(styles.main)}>*/}
@@ -28,7 +27,6 @@ class App extends Component {
             </Router>
         );
     }
-
     componentDidMount () {}
 }
 const styles = StyleSheet.create({

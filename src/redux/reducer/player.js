@@ -18,6 +18,9 @@ const Player = (state = initialState, action) => {
                     singLrc: action.item.singLrc,
                     singUrl: action.item.singUrl,
                     singTitle: action.item.singTitle,
+                    singInterval: action.item.singInterval,
+                    singAlbum: action.item.singAlbum,
+                    singLyric: action.item.singLyric
                 }
             });
         case 'ADD_PLAYER':
@@ -30,7 +33,10 @@ const Player = (state = initialState, action) => {
                         singAuthor: action.item.singAuthor,
                         singLrc: action.item.singLrc,
                         singUrl: action.item.singUrl,
-                        singTitle: action.item.singTitle
+                        singTitle: action.item.singTitle,
+                        singInterval: action.item.singInterval,
+                        singAlbum: action.item.singAlbum,
+                        singLyric: action.item.singLyric
                     }
                 ].reverse()
             });

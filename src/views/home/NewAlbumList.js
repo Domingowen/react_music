@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import {StyleSheet, css} from "aphrodite";
 import Carousel from "antd/lib/carousel";
 import Title from "./Title.js";
-import axios from 'axios';
-import Player from "../../redux/reducer/player";
-export default class RecommendList extends Component {
+import axios from "axios";
+export default class NewAlbumList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,104 +15,86 @@ export default class RecommendList extends Component {
     carousel = null;
     componentDidMount () {}
     componentDidUpdate (prevProps, prevState) {
-        // console.log(prevProps);
         if (this.props.list.length !== prevProps.list.length) {
             this.setState({
                 list: this.props.list
             })
         }
         if (this.props.navList.length !== prevProps.navList.length) {
+            this.props.navList.map(val => {
+                val.item_name = val.name;
+                return val;
+            });
             this.setState({
                 navList: this.props.navList
             })
         }
+
     }
     handleSelectRecommend (index, item) {
         console.log(index, item);
-        let id = item.item_id;
         this.carousel.goTo(0);
         this.setState({
             selectIndex: 0
         });
-        if (id === 0 ) {
-            axios({
-                method: 'post',
-                url: 'http://192.168.254.103:20200/v1/music/sing_recommend',
-                data: {
-                    id: id,
-                }
-            }).then((res) => {
-                let data = res.data.data.recomPlaylist.data.v_hot;
-                let recommend = [];
-                for(let i=0,len=10;i<len;i+=5){
-                    recommend.push(data.slice(i,i+5));
-                }
-                console.log(data);
-                this.setState({
-                    list: recommend
-                })
-            }).catch((res) => {
-                console.log(res);
-            });
-        } else {
-            axios({
-                method: 'post',
-                url: 'http://192.168.254.103:20200/v1/music/sing_service',
-                data: {
-                    id: id,
-                }
-            }).then((res) => {
-                let data = res.data.data.playlist.data.v_playlist;
-                let recommend = [];
-                for(let i=0,len=10;i<len;i+=5){
-                    recommend.push(data.slice(i,i+5));
-                }
-                console.log(data);
-                this.setState({
-                    list: recommend
-                })
-            }).catch((res) => {
-                console.log(res);
-            });
-        }
+        let id = item.id;
+        axios({
+            method: 'post',
+            url: 'http://192.168.254.103:20200/v1/music/sing_album',
+            data: {
+                area: id,
+            }
+        }).then((res) => {
+            console.log(res.data.data.new_album.data.list);
+            let data = res.data.data.new_album.data.list;
+            let newAlbum = [];
+            for(let i=0,len=data.length - 1;i<len;i+=10){
+                newAlbum.push(data.slice(i,i+10));
+            }
+            this.setState({
+                list: newAlbum,
+            })
+        }).catch((res) => {
+            console.log(res);
+        });
     }
     render () {
         return (
             <div className={css(styles.rec_container)}>
-                <Title title={'歌单推荐'} nav={this.state.navList} handleSelect={this.handleSelectRecommend.bind(this)}/>
+                <Title title={'新碟首发'} nav={this.state.navList} handleSelect={this.handleSelectRecommend.bind(this)}/>
                 <div className={css(styles.carousel_container)}>
                     {this.state.list.length > 0 &&
-                        <Carousel
-                            ref={(el) => this.carousel = el}
-                            dots={false}
-                            autoplay={true}
-                            speed={500}
-                            autoplaySpeed={5000}
-                            afterChange={(index)=> {this.setState({selectIndex: index})}}
-                        >
-                            {
-                                this.state.list.map((val, index) => {
-                                    return <div className={css(styles.carousel_recommend_container)} key={index}>
-                                        <ul className={css(styles.carousel_recommend_list)}>
-                                            {val.map((val, oIndex) => {
-                                                // console.log(val);
-                                                return  <li className={css(styles.carousel_recommend_items)} key={oIndex}
-                                                            // onClick={this.handleDetailSingRecommend.bind(this, val)}
-                                                >
-                                                    <div className={css(styles.carousel_rec_img_content)}>
-                                                        {   val.cover_url_big ?
-                                                            <img className={css(styles.carousel_rec_img) + ' imgActive'} src={val.cover_url_big} alt=""/> :
-                                                            <img className={css(styles.carousel_rec_img) + ' imgActive'} src={val.cover} alt=""/>
-                                                        }
-                                                    </div>
-                                                    <span className={css(styles.carousel_rec_txt)}>{val.title}</span>
-                                                </li>
-                                            })}
-                                        </ul>
-                                    </div>
-                                })
-                            }
-                        </Carousel>
+                    <Carousel
+                        ref={(el) => this.carousel = el}
+                        dots={false}
+                        autoplay={false}
+                        speed={500}
+                        autoplaySpeed={5000}
+                        afterChange={(index)=> {this.setState({selectIndex: index})}}
+                    >
+                        {
+                            this.state.list.map((val, index) => {
+                                return <div className={css(styles.carousel_recommend_container)} key={index}>
+                                    <ul className={css(styles.carousel_recommend_list)}>
+                                        {val.map((val, oIndex) => {
+                                            // console.log(val);
+                                            return <li className={css(styles.carousel_recommend_items)} key={val.album_id}
+                                                // onClick={this.handleDetailSingRecommend.bind(this, val)}
+                                            >
+                                                <div className={css(styles.carousel_rec_img_content)}>
+                                                    <img className={css(styles.carousel_rec_img) + ' imgActive'} src={`//y.gtimg.cn/music/photo_new/T002R300x300M000${val.album_mid}.jpg?max_age=2592000`} alt=""/>
+                                                </div>
+                                                <div className={css(styles.carousel_rec_txt)}>
+                                                    <p className={css(styles.carousel_rec_title)}>{val.album_name}</p>
+                                                    <p className={css(styles.carousel_rec_singer)}>{val.singers[0].singer_name}</p>
+                                                </div>
+                                            </li>
+                                        })}
+                                    </ul>
+                                </div>
+                            })
+                        }
+                    </Carousel>
                     }
                     <div className={css(styles.carousel_btn_left)}
                          onClick={() => {this.carousel.prev()}}
@@ -150,10 +131,10 @@ const styles = StyleSheet.create({
     },
     carousel_container: {
         width: '1100px',
-        height: '300px',
         margin: '20px auto 0',
         webkitTapHighlightColor: 'transparent',
         outline: 'none',
+        paddingBottom: '20px'
     },
     carousel_recommend_container: {
         webkitTapHighlightColor: 'transparent',
@@ -162,15 +143,17 @@ const styles = StyleSheet.create({
     },
     carousel_recommend_list: {
         display: 'flex',
-        alignItems: 'center',
+        flexWrap: 'wrap',
         justifyContent: 'space-between'
     },
     carousel_recommend_items: {
         width: '19%',
-        height: '260px',
         display: 'flex',
         flexDirection: 'column',
         webkitTapHighlightColor: 'transparent',
+        outline: 'none',
+        border: 'none',
+        overflow: 'hidden',
         cursor: 'pointer',
         ':hover': {
             color: '#31c27c',
@@ -180,23 +163,28 @@ const styles = StyleSheet.create({
         }
     },
     carousel_rec_img_content: {
-        width: '100%',
+        width: '210px',
+        height: '210px',
+        outline: 'none',
+        border: 'none',
         overflow: 'hidden',
     },
     carousel_rec_img: {
-        width: '100%',
-        transition: '0.5s all',
+        width: '210px',
+        height: '210px',
+        outline: 'none',
+        border: 'none',
+        overflow: 'hidden',
+        transition: '0.5s all'
     },
     carousel_rec_txt: {
-        height: '40px',
-        paddingTop: '10px',
-        lineHeight: '20px',
+        paddingBottom: '10px',
+        poddingTop: '10px',
     },
     dot_list: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: '10px'
     },
     dot_item: {
         width: '8px',

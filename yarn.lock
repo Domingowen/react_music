@@ -6070,11 +6070,10 @@ nth-check@^1.0.1, nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
-nuka-carousel@^4.4.2:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/nuka-carousel/-/nuka-carousel-4.4.2.tgz#d5a3e148f03a348fd7f5cfe793f07bacb038a6cb"
+nuka-carousel@^4.4.3:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/nuka-carousel/-/nuka-carousel-4.4.3.tgz#ae815cb7ffa2ae2d4b2572da244d85a1574d8a31"
   dependencies:
-    "@babel/plugin-proposal-object-rest-spread" "^7.0.0"
     d3-ease "^1.0.3"
     exenv "^1.2.0"
     prop-types "^15.6.0"

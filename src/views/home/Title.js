@@ -4,42 +4,45 @@ export default class Title extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            titleList: [
-                {
-                    item_name: '为你推荐',
-                    item_id: 0
-                },
-                {
-                    item_name: '为你推荐',
-                    item_id: 1
-                },
-                {
-                    item_name: '为你推荐',
-                    item_id: 2
-                },
-                {
-                    item_name: '为你推荐',
-                    item_id: 3
-                }
-            ],
+            titleList: [],
             titleSelect: 0,
+            title: null
         }
     }
     handleSelectTitle (index, id) {
         this.setState({
             titleSelect: index
+        });
+        this.props.handleSelect(index, id);
+    }
+    componentDidUpdate (prevProps, prevState) {
+        console.log(this.props);
+        // console.log(prevProps);
+        if (this.props.nav.length !== prevProps.nav.length) {
+            this.setState({
+                titleList: this.props.nav
+            })
+        }
+    }
+    componentDidMount () {
+        this.setState({
+            title: this.props.title
         })
     }
+
     render () {
         return (
             <div className={css(styles.title_container)}>
                 <div className={css(styles.title)}>
-                    歌单推荐
+                    {this.state.title}
                 </div>
                 <ul className={css(styles.menu)}>
                     {
                         this.state.titleList.map((val, index) => {
-                            return <li key={index} className={css(styles.menu_item, this.state.titleSelect === index ? styles.menu_item_active : null)} onClick={this.handleSelectTitle.bind(this, index, val.item_id)}>{val.item_name}</li>
+                            return <li key={index}
+                                       className={css(styles.menu_item, this.state.titleSelect === index ? styles.menu_item_active : null)}
+                                       onClick={this.handleSelectTitle.bind(this, index, val)}
+                            >{val.item_name}</li>
                         })
                     }
                 </ul>

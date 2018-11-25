@@ -9,11 +9,15 @@ import {createStore, applyMiddleware, compose} from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension'
 // import {createLogger} from 'redux-logger';
 // const loggerMiddleware = createLogger({collapsed: true});
+import PlayerAudio from './components/player/AudioPlayer';
 const store = createStore(rootReducer, compose(composeWithDevTools()));
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <div>
+            <PlayerAudio/>
+            <App />
+        </div>
     </Provider>
     ,
     document.getElementById('root'));

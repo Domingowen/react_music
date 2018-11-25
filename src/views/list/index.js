@@ -13,16 +13,34 @@ class List extends Component{
         super(props);
     }
     componentDidUpdate (prevProps, prevState){}
+    timeFormat (time) {
+        let hour = parseInt(time / 3600);
+        let min = parseInt((time / 60) % 60);
+        let sec = parseInt(time % 60);
+        let currentMin = '';
+        let currentSec = '';
+        if (min < 10) {
+            currentMin = `0${min}`;
+        } else {
+            currentMin = min;
+        }
+        if (sec < 10) {
+            currentSec = `0${sec}`;
+        } else {
+            currentSec = sec;
+        }
+        return `${currentMin}:${currentSec}`;
+    }
     render () {
         console.log(this.props);
         return (
             <div className={css(styles.container)}>
                 {this.props.playerList.length > 0 ?
-                    <div className={css(styles.listHeader)}>
+                    <div className={css(styles.list_title)}>
                         <span className={css(styles.title_song)}>歌曲</span>
                         <span className={css(styles.title_singer)}>歌手</span>
-                        <span className={css(styles.title_album)}>专辑图片</span>
-                        {/*<span className={css(styles.title_control)}>操作</span>*/}
+                        <span className={css(styles.title_album)}>专辑</span>
+                        <span className={css(styles.title_time)}>时长</span>
                     </div>
                     : null
                 }
@@ -30,19 +48,20 @@ class List extends Component{
                 <ul className={css(styles.list)}>
                     {this.props.playerList.length > 0 ?
                         this.props.playerList.map((val, index) => {
-                            return  <li className={css(styles.item)} key={index}>
-                                <div className={css(styles.item_song)}>{val.singTitle}</div>
-                                <div className={css(styles.item_singer)}>{val.singAuthor}</div>
-                                <img className={css(styles.item_img)} src={val.singPic} alt=""/>
-                                <div className={css(styles.item_control)}>
-                                    {/*<span style={{marginRight: '20px', cursor: 'pointer'}} onClick={this.play.bind(this, val, index)}>播放</span>*/}
-                                    {/*<span style={{cursor: 'pointer'}} onClick={this.deleteItem.bind(this, val)}>删除</span>*/}
-                                    {val.isPlay ?
-                                        <IconFont type="icon-zanting9" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
-                                        :
-                                        <IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
-                                    }
-                                    <IconFont type="icon-shanchu2" className={css(styles.item_play) + ' item_play'} onClick={this.deleteItem.bind(this, val)}/>
+                            return  <li className={css(styles.list_item)} key={index}>
+                                <span className={css(styles.item_song)}>{val.singTitle}&nbsp;{val.singLyric}</span>
+                                <span className={css(styles.item_singer)}>{val.singAuthor}</span>
+                                <span className={css(styles.item_album)}>{val.singAlbum}</span>
+                                <span className={css(styles.item_time)}>{this.timeFormat(val.singInterval)}</span>
+                                {/*<img className={css(styles.item_album)} src={val.pic} alt=""/>*/}
+                                <div className={css(styles.item_playControl)}>
+                                    {/*{val.isPlay ?*/}
+                                        {/*<IconFont type="icon-zanting9" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>*/}
+                                        {/*:*/}
+                                        {/*<IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>*/}
+                                    {/*}*/}
+                                    {/*<IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.add.bind(this, val)}/>*/}
+
                                 </div>
                             </li>
                         })
@@ -81,73 +100,86 @@ export default connect(mapStateToProps, mapDispatchToProps)(List)
 
 const styles = StyleSheet.create({
     container: {
-        width: '1000px',
+        width: '1100px',
         margin: '0 auto'
     },
 
-    listHeader: {
+    list: {
+        width: '1100px',
+        margin: '0 auto',
+        position: 'relative',
+        // paddingLeft: '20px',
+    },
+    list_title: {
         display: 'flex',
         alignItems: 'center',
         height: '50px',
-        // borderBottom: '1px solid #ccc'
         // backgroundColor: '#fff'
     },
     title_song: {
         width: '400px',
-
+        paddingLeft: '10px'
     },
     title_singer: {
-        width: '300px',
+        width: '200px',
     },
     title_album: {
-        width: '80px',
-        textAlign: 'center'
+        width: '230px',
+        // textAlign: 'center'
+    },
+    title_time: {
+
     },
     title_control: {
         width: '200px',
         textAlign: 'center'
     },
-    list: {
-        paddingBottom: '10px'
-    },
-    item: {
+
+    list_item: {
         display: 'flex',
         alignItems: 'center',
-        marginTop: '10px',
-        ':hover': {
-            color: '#31c27c'
-        },
+        paddingTop: '10px',
+        height: '50px',
+        fontSize: '14px',
+        position: 'relative',
         ':hover .item_play': {
             display: 'block'
+        },
+        ':nth-child(2n)': {
+            backgroundColor: 'rgba(0,0,0,0.01)'
         }
     },
     item_song: {
         width: '400px',
+        paddingLeft: '10px'
     },
-    item_singer: {
-        width: '300px',
+    item_singer:{
+        width: '200px',
     },
-    item_img: {
-        width: '80px',
-        height: '80px',
+    item_album: {
+        width: '230px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+        // height: '80px',
+        // marginRight: '50px'
+    },
+    item_time: {
 
     },
     item_play: {
-        // width: '200px',
-        textAlign: 'center',
         color: '#777',
         fontSize: '36px',
-        marginRight: '15px',
+        marginRight: '10px',
         display: 'none',
         cursor: 'pointer',
         ':hover': {
             color: '#31c27c'
         }
     },
-    item_control: {
-        width: '200px',
-        textAlign: 'center',
+    item_playControl: {
+        position: 'absolute',
+        right: 0,
         display: 'flex',
-        justifyContent: 'center'
-    }
+    },
 });
