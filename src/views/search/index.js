@@ -37,7 +37,7 @@ class Search extends Component{
     async play (item) {
         console.log(item);
         let lrc = await axios({ // 获取歌词
-            url: 'http://192.168.254.103:20200/v1/music/music_song_lrc2',
+            url: 'http://192.168.0.122:20200/v1/music/music_song_lrc2',
             method: 'post',
             data: {
                 songmid: item.songmid
@@ -49,7 +49,7 @@ class Search extends Component{
             console.log(err);
         });
         // axios({
-        //     url: 'http://192.168.254.103:20200/v1/music/music_song_url2',
+        //     url: 'http://192.168.0.122:20200/v1/music/music_song_url2',
         //     method: 'post',
         //     data: {
         //         songmid: item.songmid
@@ -60,7 +60,7 @@ class Search extends Component{
         //     console.log(err);
         // });
         // axios({
-        //     url: 'http://192.168.254.103:20200/v1/music/music_song_url',
+        //     url: 'http://192.168.0.122:20200/v1/music/music_song_url',
         //     method: 'post',
         //     data: {
         //         songmid: item.songmid
@@ -72,7 +72,7 @@ class Search extends Component{
         //     console.log(err);
         // });
         // axios({
-        //     url: 'http://192.168.254.103:20200/v1/music/music_song_key',
+        //     url: 'http://192.168.0.122:20200/v1/music/music_song_key',
         //     method: 'post',
         //     data: {}
         // }).then(res => {
@@ -138,7 +138,7 @@ class Search extends Component{
     getData () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/new_search',
+            url: 'http://192.168.0.122:20200/v1/music/new_search',
             data: {
                 page: this.state.page,
                 name: this.state.text,

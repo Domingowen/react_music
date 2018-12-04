@@ -15,57 +15,102 @@ class AudioPlayer extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // console.log(this.props.playerData);
-        // console.log(prevState);
-        if (prevProps.playerData.control.isPlay !== this.props.playerData.control.isPlay) {
+        if (this.props.playerData.player.singId !== prevProps.playerData.player.singId) {
+            // console.log(prevProps);
+            // console.log(this.props.playerData.player);
+            if (this.state.singUrl) {
+                this.player.pause();
+                this.player.currentTime = 0;
+            }
+            this.setState({
+                singUrl: this.props.playerData.player.singUrl,
+                singId: this.props.playerData.player.singId,
+            })
+        }
+        if (this.props.playerData.list.length !== prevProps.playerData.list.length) {
+            // console.log(prevProps.playerData);
+            this.setState({
+                playList: this.props.playerData.list
+            })
+        }
+        if (this.props.playerData.control.isPlay !== prevProps.playerData.control.isPlay) {
             this.setState({
                 isPlay: this.props.playerData.control.isPlay
             }, () => {
-                console.log(this.state.isPlay);
-                if(this.state.isPlay) {
-                    setTimeout(() => {
-                        this.state.singUrl && this.player.play();
-                    }, 30)
+                if (this.state.isPlay) {
+                    this.player.play();
                 } else {
-                    setTimeout(() => {
-                        this.state.singUrl && this.player.pause();
-                    }, 30)
+                    this.player.pause();
                 }
             })
         }
-        if (this.props.playerData.player.singId !== prevState.singId) {
-            setTimeout(() => {
-                this.player.currentTime = 0;
-            }, 30)
-        } else {
-            if(this.props.playerData.time.currentTime && this.player.currentTime !== this.props.playerData.time.currentTime) {
-                this.player.currentTime = this.props.playerData.time.currentTime
-            }
-        }
-        if (this.props.playerData.status !== this.state.isLoop) {
-            console.log(this.props.playerData.status);
+        if (this.props.playerData.status !== prevProps.playerData.status) {
+            console.log(prevProps.playerData);
+            console.log(this.props.playerData);
+            // this.player.pause();
             this.setState({
                 isLoop: !this.state.isLoop
-            })
+            });
+
         }
+        if (this.props.playerData.time.currentTime && this.player.currentTime !== this.props.playerData.time.currentTime) {
+            // this.player.pause();
+            // setTimeout(() => {
+            this.player.currentTime = this.props.playerData.time.currentTime;
+            // this.player.play();
+            // }, 0);
+        }
+        // console.log(this.props.playerData);
+        // console.log(prevState);
+        // if (prevProps.playerData.control.isPlay !== this.props.playerData.control.isPlay) {
+        //     this.setState({
+        //         isPlay: this.props.playerData.control.isPlay
+        //     }, () => {
+        //         console.log(this.state.isPlay);
+        //         if(this.state.isPlay) {
+        //             setTimeout(() => {
+        //                 this.state.singUrl && this.player.play();
+        //             }, 30)
+        //         } else {
+        //             setTimeout(() => {
+        //                 this.state.singUrl && this.player.pause();
+        //             }, 30)
+        //         }
+        //     })
+        // }
+        // if (this.props.playerData.player.singId !== prevState.singId) {
+        //     setTimeout(() => {
+        //         this.player.currentTime = 0;
+        //     }, 30)
+        // } else {
+        //     if(this.props.playerData.time.currentTime && this.player.currentTime !== this.props.playerData.time.currentTime) {
+        //         this.player.currentTime = this.props.playerData.time.currentTime
+        //     }
+        // }
+        // if (this.props.playerData.status !== this.state.isLoop) {
+        //     console.log(this.props.playerData.status);
+        //     this.setState({
+        //         isLoop: !this.state.isLoop
+        //     })
+        // }
     }
 
     componentDidMount() {}
 
-    static getDerivedStateFromProps(nextProps, prevState) {
+    // static getDerivedStateFromProps(nextProps, prevState) {
         // console.log(nextProps);
         // console.log(prevState);
-        if (nextProps.playerData.player.singUrl !== prevState.singUrl ||
-            nextProps.playerData.player.singId !== prevState.singId) {
-            return {
-                singUrl: nextProps.playerData.player.singUrl,
-                singId: nextProps.playerData.player.singId,
-            }
-        }
-        return {
-            playList: nextProps.playerData.list
-        }
-    }
+        // if (nextProps.playerData.player.singUrl !== prevState.singUrl ||
+        //     nextProps.playerData.player.singId !== prevState.singId) {
+        //     return {
+        //         singUrl: nextProps.playerData.player.singUrl,
+        //         singId: nextProps.playerData.player.singId,
+        //     }
+        // }
+        // return {
+        //     playList: nextProps.playerData.list
+        // }
+    // }
 
     player = null;
 
@@ -99,17 +144,18 @@ class AudioPlayer extends Component {
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
         console.log(index);
         if (this.state.isLoop) {
+
         } else {
-            this.setState({
-                singUrl: ''
-            }, () => {
-                if (this.state.playList.length - 1 > index) {
-                    this.props.player(this.state.playList[index + 1]);
-                } else {
-                    this.props.player(this.state.playList[0]);
-                }
-                this.player.play();
-            });
+            // this.setState({
+            //     singUrl: ''
+            // }, () => {
+            //     if (this.state.playList.length - 1 > index) {
+            //         this.props.player(this.state.playList[index + 1]);
+            //     } else {
+            //         this.props.player(this.state.playList[0]);
+            //     }
+            //     // this.player.play();
+            // });
         }
         // console.log('播放结束');
     };
@@ -150,7 +196,7 @@ class AudioPlayer extends Component {
                     // onPlaying={this.playPlaying.bind(this)}
                     onEnded={this.playEnd.bind(this)}
                     ref={(el) => this.player = el}
-                    loop={this.state.isLoop}
+                    // loop={this.state.isLoop}
                     controls
                 /> : null
         )

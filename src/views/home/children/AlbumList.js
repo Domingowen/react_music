@@ -94,7 +94,7 @@ export default class AlbumList extends Component {
     getAlbumListData () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/album_list',
+            url: 'http://192.168.0.122:20200/v1/music/album_list',
             data: {
                 area: this.state.area,
                 genre: this.state.genre,
@@ -115,7 +115,7 @@ export default class AlbumList extends Component {
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/album_list',
+            url: 'http://192.168.0.122:20200/v1/music/album_list',
             data: {
                 area: this.state.area,
                 genre: this.state.genre,

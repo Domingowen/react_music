@@ -37,7 +37,7 @@ class Detail extends Component {
             case 'rec':
                 axios({
                     method: 'post',
-                    url: 'http://192.168.254.103:20200/v1/music/detail_rec',
+                    url: 'http://192.168.0.122:20200/v1/music/detail_rec',
                     data: {
                         contentId: contentId ? contentId : tId
                     }
@@ -58,7 +58,7 @@ class Detail extends Component {
             case 'album':
                 axios({
                     method: 'post',
-                    url: 'http://192.168.254.103:20200/v1/music/detail_album',
+                    url: 'http://192.168.0.122:20200/v1/music/detail_album',
                     data: {
                         albummid: albummid
                     }
@@ -97,7 +97,7 @@ class Detail extends Component {
         const hide = Message.loading('正在请求音乐数据..', 0);
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/search',
+            url: 'http://192.168.0.122:20200/v1/music/search',
             data: {
                 search: item.songmid,
                 filter: 'id',
@@ -128,7 +128,7 @@ class Detail extends Component {
     addPlayerList (item) {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/search',
+            url: 'http://192.168.0.122:20200/v1/music/search',
             data: {
                 search: item.songmid,
                 filter: 'id',

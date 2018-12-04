@@ -40,7 +40,7 @@ export default class NewAlbumList extends Component {
         let id = item.id;
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/sing_album',
+            url: 'http://192.168.0.122:20200/v1/music/sing_album',
             data: {
                 area: id,
             }
@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
         margin: '20px auto 0',
         webkitTapHighlightColor: 'transparent',
         outline: 'none',
-        paddingBottom: '20px'
+        paddingBottom: '20px',
+        minHeight: '200px',
     },
     carousel_recommend_container: {
         webkitTapHighlightColor: 'transparent',

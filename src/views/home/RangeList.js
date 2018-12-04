@@ -32,7 +32,7 @@ export default class RangeList extends Component {
         const hide = Message.loading('正在请求音乐数据..', 0);
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/search',
+            url: 'http://192.168.0.122:20200/v1/music/search',
             data: {
                 search: val.data.songmid,
                 filter: 'id',

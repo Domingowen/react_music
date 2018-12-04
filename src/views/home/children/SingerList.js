@@ -54,7 +54,7 @@ export default class SingerList extends Component {
     getSingerListData () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/singer_list',
+            url: 'http://192.168.0.122:20200/v1/music/singer_list',
             data: {
                 area: this.state.area_select,
                 sex: this.state.sex_select,
@@ -76,7 +76,7 @@ export default class SingerList extends Component {
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/singer_list',
+            url: 'http://192.168.0.122:20200/v1/music/singer_list',
             data: {
                 area: this.state.area_select,
                 sex: this.state.sex_select,

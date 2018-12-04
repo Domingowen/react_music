@@ -38,7 +38,7 @@ export default class RecommendList extends Component {
         if (id === 0 ) {
             axios({
                 method: 'post',
-                url: 'http://192.168.254.103:20200/v1/music/sing_recommend',
+                url: 'http://192.168.0.122:20200/v1/music/sing_recommend',
                 data: {
                     id: id,
                 }
@@ -58,7 +58,7 @@ export default class RecommendList extends Component {
         } else {
             axios({
                 method: 'post',
-                url: 'http://192.168.254.103:20200/v1/music/sing_service',
+                url: 'http://192.168.0.122:20200/v1/music/sing_service',
                 data: {
                     id: id,
                 }

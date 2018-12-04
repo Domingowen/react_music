@@ -58,7 +58,7 @@ export default class NewSongList extends Component {
         let id = item.id;
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/sing_new',
+            url: 'http://192.168.0.122:20200/v1/music/sing_new',
             data: {
                 type: id,
             }
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
         webkitTapHighlightColor: 'transparent',
         outline: 'none',
         paddingBottom: '20px',
+        minHeight: '200px',
     },
     carousel_recommend_container: {
         webkitTapHighlightColor: 'transparent',

@@ -49,7 +49,7 @@ class Main extends Component {
     // handleSelectNewSing (index, id) {
     //     axios({
     //         method: 'post',
-    //         url: 'http://192.168.254.103:20200/v1/music/sing_new',
+    //         url: 'http://192.168.0.122:20200/v1/music/sing_new',
     //         data: {
     //             type: id,
     //         }
@@ -73,7 +73,7 @@ class Main extends Component {
     // handleSelectNewAlbum (index, id){
     //     axios({
     //         method: 'post',
-    //         url: 'http://192.168.254.103:20200/v1/music/sing_album',
+    //         url: 'http://192.168.0.122:20200/v1/music/sing_album',
     //         data: {
     //             area: id,
     //         }
@@ -125,7 +125,7 @@ class Main extends Component {
         const hide = Message.loading('正在请求音乐数据..', 0);
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/search',
+            url: 'http://192.168.0.122:20200/v1/music/search',
             data: {
                 search: val.mid,
                 filter: 'id',
@@ -166,7 +166,7 @@ class Main extends Component {
         const hide = Message.loading('正在请求音乐数据..', 0);
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/search',
+            url: 'http://192.168.0.122:20200/v1/music/search',
             data: {
                 search: val.data.songmid,
                 filter: 'id',
@@ -205,7 +205,7 @@ class Main extends Component {
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/recommend'
+            url: 'http://192.168.0.122:20200/v1/music/recommend'
         }).then((res) => {
             console.log(res.data.data);
             let data = res.data.data;
@@ -242,7 +242,7 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            url: 'http://192.168.0.122:20200/v1/music/toplist',
             data: {
                 topId: 4,
                 // date: moment().format('YYYY-MM-DD')
@@ -256,7 +256,7 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            url: 'http://192.168.0.122:20200/v1/music/toplist',
             data: {
                 topId: 26,
                 // date: moment().format('YYYY-MM-DD')
@@ -270,7 +270,7 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            url: 'http://192.168.0.122:20200/v1/music/toplist',
             data: {
                 topId: 27,
                 // date: moment().format('YYYY-MM-DD')
@@ -284,7 +284,7 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            url: 'http://192.168.0.122:20200/v1/music/toplist',
             data: {
                 topId: 3,
                 // date: moment().format('YYYY-MM-DD')
@@ -298,7 +298,7 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.254.103:20200/v1/music/toplist',
+            url: 'http://192.168.0.122:20200/v1/music/toplist',
             data: {
                 topId: 16,
                 // date: moment().format('YYYY-MM-DD')
