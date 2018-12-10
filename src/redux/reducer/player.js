@@ -70,11 +70,6 @@ const Player = (state = initialState, action) => {
                     isPlay: action.item.isPlay
                 }
             });
-        case 'PLAYINDEX':
-            // return Object.assign({}, state, {
-            //     playIndex: action.playIndex
-            // });
-            break;
         case 'PLAYSTATUS':
             return Object.assign({}, state, {
                 status: action.item.status

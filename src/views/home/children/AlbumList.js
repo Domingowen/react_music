@@ -17,6 +17,16 @@ export default class AlbumList extends Component {
             headerTitle: '内地'
         }
     }
+    handleAlbumDetail (item) {
+        console.log(item);
+        this.props.history.push({
+            pathname: '/home/detail',
+            state: {
+                item: item,
+                type: 'album'
+            }
+        })
+    }
     render () {
         return (
             <div className={css(styles.container)}>
@@ -36,7 +46,10 @@ export default class AlbumList extends Component {
                     <ul className={css(styles.item_list)}>
                         {
                             this.state.list.map(val => {
-                                return <li className={css(styles.item)} key={val.album_mid}>
+                                return <li className={css(styles.item)}
+                                           key={val.album_mid}
+                                           onClick={this.handleAlbumDetail.bind(this, val)}
+                                >
                                     <div className={css(styles.item_img_container)}>
                                         <img
                                             className={css(styles.item_img)}
@@ -94,7 +107,7 @@ export default class AlbumList extends Component {
     getAlbumListData () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/album_list',
+            url: 'http://192.168.0.131:20200/v1/music/album_list',
             data: {
                 area: this.state.area,
                 genre: this.state.genre,
@@ -115,7 +128,7 @@ export default class AlbumList extends Component {
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/album_list',
+            url: 'http://192.168.0.131:20200/v1/music/album_list',
             data: {
                 area: this.state.area,
                 genre: this.state.genre,

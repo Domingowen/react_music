@@ -46,168 +46,120 @@ class Main extends Component {
 
         }
     }
-    // handleSelectNewSing (index, id) {
-    //     axios({
-    //         method: 'post',
-    //         url: 'http://192.168.0.122:20200/v1/music/sing_new',
-    //         data: {
-    //             type: id,
-    //         }
-    //     }).then((res) => {
-    //         console.log(res.data.data);
-    //         let data = res.data.data.new_song.data.song_list;
-    //         let newSong = [];
-    //         for(let i=0,len=data.length - 1;i<5;i+=9){
-    //             newSong.push(data.slice(i,i+9));
-    //         }
-    //         this.setState({
-    //             newSingPlay: newSong,
-    //         })
-    //     }).catch((res) => {
-    //         console.log(res);
-    //     });
-    //     this.setState({
-    //         newSingSelect: index,
-    //     })
-    // }
-    // handleSelectNewAlbum (index, id){
-    //     axios({
-    //         method: 'post',
-    //         url: 'http://192.168.0.122:20200/v1/music/sing_album',
-    //         data: {
-    //             area: id,
-    //         }
-    //     }).then((res) => {
-    //         // console.log(res.data.data.new_album.data.list);
-    //         let data = res.data.data.new_album.data.list;
-    //         let newAlbum = [];
-    //         for(let i=0,len=data.length - 1;i<len;i+=10){
-    //             newAlbum.push(data.slice(i,i+10));
-    //         }
-    //         this.setState({
-    //             newAlbumPlay: newAlbum,
-    //         })
-    //     }).catch((res) => {
-    //         console.log(res);
-    //     });
-    //     this.setState({
-    //         newAlbumSelect: index,
-    //     })
-    // }
     handleDetailSingRecommend (val) {
-        console.log(val);
-        this.props.history.push({
-            pathname: '/home/detail',
-            state: {
-                item: val,
-                type: 'rec'
-
-            }
-        })
+        // console.log(val);
+        // this.props.history.push({
+        //     pathname: '/home/detail',
+        //     state: {
+        //         item: val,
+        //         type: 'rec'
+        //
+        //     }
+        // })
     }
     handleDetailSingNew (val) {
         // console.log(val);
         // this.props.history.push("/home/detail")
     }
     handleDetailSingAlbum (val) {
-        console.log(val);
-        this.props.history.push({
-            pathname: '/home/detail',
-            state: {
-                item: val,
-                type: 'album'
-            }
-        })
+        // console.log(val);
+        // this.props.history.push({
+        //     pathname: '/home/detail',
+        //     state: {
+        //         item: val,
+        //         type: 'album'
+        //     }
+        // })
         // this.props.history.push("/home/detail")
     }
     handlePlayNewSong (val) {
-        console.log(val);
-        const hide = Message.loading('正在请求音乐数据..', 0);
-        axios({
-            method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/search',
-            data: {
-                search: val.mid,
-                filter: 'id',
-                type: 'qq',
-                page: 1,
-            }
-        }).then(res => {
-            console.log(res.data.data.data);
-
-            let data = res.data.data.data[0];
-            let items = {
-                singId: data.songid,
-                singPic: data.pic,
-                singAuthor: data.author,
-                singLrc: data.lrc,
-                singUrl: data.url,
-                singTitle: data.title,
-            };
-            this.props.addPlayer(items);
-            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-                this.props.addPlayerList(items);
-            }
-            this.props.changeControl({
-                isPlayer: true,
-            });
-            // Notification.open({
-            //     message: 'Hi',
-            //     description: `${items.singTitle} 准备播放~~`,
-            //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
-            // });
-            Message.success(`${items.singTitle}，准备播放`)
-        }).catch(err => {
-            console.log(err);
-        })
+        // console.log(val);
+        // const hide = Message.loading('正在请求音乐数据..', 0);
+        // axios({
+        //     method: 'post',
+        //     url: 'http://192.168.0.131:20200/v1/music/search',
+        //     data: {
+        //         search: val.mid,
+        //         filter: 'id',
+        //         type: 'qq',
+        //         page: 1,
+        //     }
+        // }).then(res => {
+        //     console.log(res.data.data.data);
+        //
+        //     let data = res.data.data.data[0];
+        //     let items = {
+        //         singId: data.songid,
+        //         singPic: data.pic,
+        //         singAuthor: data.author,
+        //         singLrc: data.lrc,
+        //         singUrl: data.url,
+        //         singTitle: data.title,
+        //     };
+        //     this.props.addPlayer(items);
+        //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+        //         this.props.addPlayerList(items);
+        //     }
+        //     this.props.changeControl({
+        //         isPlayer: true,
+        //     });
+        //     // Notification.open({
+        //     //     message: 'Hi',
+        //     //     description: `${items.singTitle} 准备播放~~`,
+        //     //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
+        //     // });
+        //     Message.success(`${items.singTitle}，准备播放`)
+        // }).catch(err => {
+        //     console.log(err);
+        // })
     }
     handlePlayPopularSong (val) {
-        console.log(val);
-        const hide = Message.loading('正在请求音乐数据..', 0);
-        axios({
-            method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/search',
-            data: {
-                search: val.data.songmid,
-                filter: 'id',
-                type: 'qq',
-                page: 1,
-            }
-        }).then(res => {
-            console.log(res.data.data.data);
-            setTimeout(hide, 100);
-            let data = res.data.data.data[0];
-            let items = {
-                singId: data.songid,
-                singPic: data.pic,
-                singAuthor: data.author,
-                singLrc: data.lrc,
-                singUrl: data.url,
-                singTitle: data.title,
-            };
-            this.props.addPlayer(items);
-            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-                this.props.addPlayerList(items);
-            }
-            this.props.changeControl({
-                isPlayer: true,
-            });
-            // Notification.open({
-            //     message: 'Hi',
-            //     description: `${items.singTitle} 准备播放~~`,
-            //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
-            // });
-            Message.success(`${items.singTitle}，准备播放`)
-        }).catch(err => {
-            console.log(err);
-        })
+        // console.log(val);
+        // const hide = Message.loading('正在请求音乐数据..', 0);
+        // axios({
+        //     method: 'post',
+        //     url: 'http://192.168.0.131:20200/v1/music/search',
+        //     data: {
+        //         search: val.data.songmid,
+        //         filter: 'id',
+        //         type: 'qq',
+        //         page: 1,
+        //     }
+        // }).then(res => {
+        //     console.log(res.data.data.data);
+        //     setTimeout(hide, 100);
+        //     let data = res.data.data.data[0];
+        //     let items = {
+        //         singId: data.songid,
+        //         singPic: data.pic,
+        //         singAuthor: data.author,
+        //         singLrc: data.lrc,
+        //         singUrl: data.url,
+        //         singTitle: data.title,
+        //     };
+        //     this.props.addPlayer(items);
+        //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+        //         this.props.addPlayerList(items);
+        //     }
+        //     this.props.changeControl({
+        //         isPlayer: true,
+        //     });
+        //     // Notification.open({
+        //     //     message: 'Hi',
+        //     //     description: `${items.singTitle} 准备播放~~`,
+        //     //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
+        //     // });
+        //     Message.success(`${items.singTitle}，准备播放`)
+        // }).catch(err => {
+        //     console.log(err);
+        // })
     }
     componentDidMount () {
+        console.log(this.props);
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/recommend'
+            url: 'http://192.168.0.131:20200/v1/music/recommend'
         }).then((res) => {
-            console.log(res.data.data);
             let data = res.data.data;
             let newSong = [];
             for(let i=0,len=data.new_song.data.song_list.length - 1;i<45;i+=9){
@@ -217,12 +169,10 @@ class Main extends Component {
             for(let i=0;i<4;i++){
                 recList.push(data.category.data.category[0].items[i]);
             }
-            // console.log(recList);
             let recommend = [];
             for(let i=0,len=10;i<len;i+=5){
                 recommend.push(data.recomPlaylist.data.v_hot.slice(i,i+5));
             }
-            // console.log(recommend);
             let newAlbum = [];
             for(let i=0,len=data.new_album.data.list.length - 1;i<len;i+=10){
                 newAlbum.push(data.new_album.data.list.slice(i,i+10));
@@ -234,21 +184,15 @@ class Main extends Component {
                 newSingList: data.new_song.data.type_info,
                 newAlbumPlay: newAlbum,
                 newAlbumList: data.new_album.data.tags.area,
-                // topSingList: data.toplist.data.group_list[0].list
             });
-            // console.log(this.state.topSingList);
-        }).catch((res) => {
-            console.log(res);
-        });
+        }).catch((res) => {});
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/toplist',
+            url: 'http://192.168.0.131:20200/v1/music/toplist',
             data: {
                 topId: 4,
-                // date: moment().format('YYYY-MM-DD')
             }
         }).then((res) => {
-            // console.log(res);
             let data = res.data.data;
             this.setState({
                 topSingList: Object.assign({}, this.state.topSingList,{pop: data.songlist})
@@ -256,13 +200,12 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/toplist',
+            url: 'http://192.168.0.131:20200/v1/music/toplist',
             data: {
                 topId: 26,
                 // date: moment().format('YYYY-MM-DD')
             }
         }).then((res) => {
-            // console.log(res);
             let data = res.data.data;
             this.setState({
                 topSingList: Object.assign({}, this.state.topSingList,{hot: data.songlist})
@@ -270,13 +213,11 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/toplist',
+            url: 'http://192.168.0.131:20200/v1/music/toplist',
             data: {
                 topId: 27,
-                // date: moment().format('YYYY-MM-DD')
             }
         }).then((res) => {
-            // console.log(res);
             let data = res.data.data;
             this.setState({
                 topSingList: Object.assign({}, this.state.topSingList,{newSing: data.songlist})
@@ -284,13 +225,11 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/toplist',
+            url: 'http://192.168.0.131:20200/v1/music/toplist',
             data: {
                 topId: 3,
-                // date: moment().format('YYYY-MM-DD')
             }
         }).then((res) => {
-            // console.log(res);
             let data = res.data.data;
             this.setState({
                 topSingList: Object.assign({}, this.state.topSingList,{europe: data.songlist})
@@ -298,13 +237,11 @@ class Main extends Component {
         });
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/toplist',
+            url: 'http://192.168.0.131:20200/v1/music/toplist',
             data: {
                 topId: 16,
-                // date: moment().format('YYYY-MM-DD')
             }
         }).then((res) => {
-            // console.log(res);
             let data = res.data.data;
             this.setState({
                 topSingList: Object.assign({}, this.state.topSingList,{korean: data.songlist})
@@ -317,10 +254,10 @@ class Main extends Component {
     render () {
         return (
             <div>
-                <RecommendList IconFont={IconFont} list={this.state.recommendPlay} navList={this.state.recommendList}/>
-                <NewSongList IconFont={IconFont} list={this.state.newSingPlay} navList={this.state.newSingList}/>
-                <NewAlbumList IconFont={IconFont} list={this.state.newAlbumPlay} navList={this.state.newAlbumList}/>
-                <RangeList IconFont={IconFont} list={this.state.topSingList}/>
+                <RecommendList history={this.props.history} IconFont={IconFont} list={this.state.recommendPlay} navList={this.state.recommendList}/>
+                <NewSongList history={this.props.history} IconFont={IconFont} list={this.state.newSingPlay} navList={this.state.newSingList}/>
+                <NewAlbumList history={this.props.history} IconFont={IconFont} list={this.state.newAlbumPlay} navList={this.state.newAlbumList}/>
+                <RangeList history={this.props.history} IconFont={IconFont} list={this.state.topSingList}/>
             </div>
         )
     }

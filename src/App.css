@@ -1,5 +1,5 @@
 body{
-    background-color: #f1f1f1;
+    background: linear-gradient(to bottom, #f1f1f1, #ffffff);
     font-family: poppin,Tahoma,Arial,\5FAE\8F6F\96C5\9ED1,sans-serif !important;
     overflow-y: hidden;
     min-width: 1100px;

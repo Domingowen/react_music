@@ -54,7 +54,7 @@ export default class SingerList extends Component {
     getSingerListData () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/singer_list',
+            url: 'http://192.168.0.131:20200/v1/music/singer_list',
             data: {
                 area: this.state.area_select,
                 sex: this.state.sex_select,
@@ -70,13 +70,20 @@ export default class SingerList extends Component {
             })
         })
     }
-    selectSinger (items) {
-        console.log(items);
+    selectSinger (item) {
+        console.log(item);
+        this.props.history.push({
+           pathname: '/home/singer_detail',
+           state: {
+               item: item,
+               type: 'singer'
+           }
+        });
     }
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/singer_list',
+            url: 'http://192.168.0.131:20200/v1/music/singer_list',
             data: {
                 area: this.state.area_select,
                 sex: this.state.sex_select,
@@ -124,7 +131,7 @@ export default class SingerList extends Component {
                 <ul className={css(styles.list)}>
                     {this.state.list.length > 0 && this.state.list.map((val, index) => {
                         if (index < 10) {
-                            return <li className={css(styles.item)} onClick={this.selectSinger.bind(this, val)}>
+                            return <li className={css(styles.item)} onClick={this.selectSinger.bind(this, val)} key={index}>
                                 <div className={css(styles.img_container)}>
                                     <img className={css(styles.img) + ' img_active'} onError={(event) => {
                                         console.log(event);
@@ -139,7 +146,7 @@ export default class SingerList extends Component {
                 <ul className={css(styles.list, styles.list_txt)}>
                     {this.state.list.length > 0 && this.state.list.map((val, index) => {
                         if (index > 9) {
-                            return <li className={css(styles.item)} onClick={this.selectSinger.bind(this, val)}>
+                            return <li className={css(styles.item)} onClick={this.selectSinger.bind(this, val)} key={index}>
                                 <p className={css(styles.singer_name)}>{val.singer_name}</p>
                             </li>
                         }

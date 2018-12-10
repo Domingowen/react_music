@@ -7,7 +7,7 @@ import SingerList from './children/SingerList.js';
 import ClassList from './children/ClassList.js';
 import RangeList from './children/RangeList.js';
 import AlbumList from './children/AlbumList.js';
-
+import SingerDetail from './singerDetailChildren/SingerIndex.js';
 export default class Home extends Component {
     constructor(props) {
         super(props);
@@ -23,6 +23,7 @@ export default class Home extends Component {
                     <Route exact path={'/home/album'} component={AlbumList}></Route>
                     <Route exact path={'/home/range'} component={RangeList}></Route>
                     <Route exact path={'/home/class'} component={ClassList}></Route>
+                    <Route exact path={'/home/singer_detail'} component={SingerDetail}></Route>
                 </Switch>
             </div>
         )

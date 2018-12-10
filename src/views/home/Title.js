@@ -16,7 +16,7 @@ export default class Title extends Component {
         this.props.handleSelect(index, id);
     }
     componentDidUpdate (prevProps, prevState) {
-        console.log(this.props);
+        // console.log(this.props);
         // console.log(prevProps);
         if (this.props.nav.length !== prevProps.nav.length) {
             this.setState({

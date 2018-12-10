@@ -21,7 +21,7 @@ export default class RangeList extends Component {
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/range_nav',
+            url: 'http://192.168.0.131:20200/v1/music/range_nav',
             data: {}
         }).then(res => {
             // console.log(res)
@@ -43,7 +43,7 @@ export default class RangeList extends Component {
     changeRangList () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/range_list',
+            url: 'http://192.168.0.131:20200/v1/music/range_list',
             data: {
                 date: this.state.date,
                 topId: this.state.topId,
@@ -181,7 +181,6 @@ const styles = StyleSheet.create({
         paddingTop: '15px',
         width: '900px',
     },
-
     list_title: {
         fontSize: '26px',
         marginBottom: '20px',

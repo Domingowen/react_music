@@ -18,7 +18,7 @@ export default class ClassList extends Component {
     componentDidMount () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/class_tag',
+            url: 'http://192.168.0.131:20200/v1/music/class_tag',
             data: {}
         }).then(res => {
             this.setState({
@@ -32,7 +32,7 @@ export default class ClassList extends Component {
     getClassList () {
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/class_list',
+            url: 'http://192.168.0.131:20200/v1/music/class_list',
             data: {
                 categoryId: this.state.categoryId,
                 sin: this.state.sin,
@@ -62,6 +62,14 @@ export default class ClassList extends Component {
     }
     handleClassDetail (item) {
         console.log(item);
+        item = Object.assign(item, {content_id: item.dissid});
+        this.props.history.push({
+            pathname: '/home/detail',
+            state: {
+                item: item,
+                type: 'recommend'
+            }
+        })
     }
     handleClean () { // 恢复默认状态
         this.setState({

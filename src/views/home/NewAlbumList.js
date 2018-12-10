@@ -40,7 +40,7 @@ export default class NewAlbumList extends Component {
         let id = item.id;
         axios({
             method: 'post',
-            url: 'http://192.168.0.122:20200/v1/music/sing_album',
+            url: 'http://192.168.0.131:20200/v1/music/sing_album',
             data: {
                 area: id,
             }
@@ -57,6 +57,16 @@ export default class NewAlbumList extends Component {
         }).catch((res) => {
             console.log(res);
         });
+    }
+    handleSelectDetail (item) {
+        console.log(item);
+        this.props.history.push({
+            pathname: '/home/detail',
+            state: {
+                item: item,
+                type: 'album'
+            }
+        })
     }
     render () {
         return (
@@ -80,6 +90,7 @@ export default class NewAlbumList extends Component {
                                             // console.log(val);
                                             return <li className={css(styles.carousel_recommend_items)} key={val.album_id}
                                                 // onClick={this.handleDetailSingRecommend.bind(this, val)}
+                                                onClick={this.handleSelectDetail.bind(this, val)}
                                             >
                                                 <div className={css(styles.carousel_rec_img_content)}>
                                                     <img className={css(styles.carousel_rec_img) + ' imgActive'} src={`//y.gtimg.cn/music/photo_new/T002R300x300M000${val.album_mid}.jpg?max_age=2592000`} alt=""/>

@@ -32,7 +32,7 @@ class App extends Component {
 const styles = StyleSheet.create({
     container: {
         minWidth: '1000px',
-        height: 'calc(100vh - 100px)',
+        height: 'calc(100vh - 90px)',
         // height: '100vh',
         overflowY: 'auto',
         overflowX: 'hidden',

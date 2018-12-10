@@ -10,6 +10,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import musicBg from '../../assets/music_player_bg.jpg'
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_heepzwrlzhf.js'
 });
@@ -249,84 +250,123 @@ class Player extends Component{
         // console.log(progress);
         return (
             <div className={css(styles.container)}>
-                <div className={css(styles.container_left)}>
-                    <div className={css(styles.container_title)}>播放列表</div>
-                    <div className={css(styles.container_list)}>
-                        <span className={css(styles.list_sing)}>歌曲</span>
-                        <span className={css(styles.list_singer)}>歌手</span>
-                        {/*<span className={css(styles.list_player)}>操作</span>*/}
-                    </div>
-                    <ul>
-                        {this.state.playList.map((val, index) => {
-                            return <li className={css(styles.player_list)} key={index}>
-                                <span className={css(styles.list_sing)}>{val.singTitle}</span>
-                                <span className={css(styles.list_singer)}>{val.singAuthor}</span>
-                                {
-                                    val.playStatus ?
-                                        <IconFont className={css(styles.list_player) + ' list_player'} type="icon-zanting9" onClick={this.startPlay.bind(this, val)}/>
-                                        :
-                                        <IconFont className={css(styles.list_player) + ' list_player'} type="icon-zanting8" onClick={this.startPlay.bind(this, val)}/>
-                                }
-                                <IconFont className={css(styles.list_player) + ' list_player'} type="icon-shanchu2" onClick={this.deletePlay.bind(this, val)}/>
-                            </li>
-                        })}
-                    </ul>
-                </div>
-                <div className={css(styles.container_right)}>
-                    <div className={css(styles.singImg)}>
-                        <img className={css(styles.img)} src={this.state.singPic} alt="" onError={this.imgOnError.bind(this)} ref={(val) => this.playerImg = val}/>
-                    </div>
-                    <div className={css(styles.singAuthor)}>
-                        <span>{this.state.singTitle}</span>
-                        <span style={{padding: '0 10px'}}>——</span>
-                        <span>{this.state.singAuthor}</span>
-                    </div>
-                    <div className={css(styles.singLrc)}>
-                        <ul className={css(styles.singLrcList)}>
-                            {this.state.showSingLrc.map((val,index) => {
-                                return <li key={index} className={moment(this.state.currentTime).get('millisecond') >= moment(parseInt(val.time) / 1000).get('millisecond')? css(styles.singLrcActive, styles.singLrcItems) : css(styles.singLrcItems)}>{val.txt}</li>
-                            })}
-                        </ul>
-                    </div>
-                    {/*<div className={css(styles.singTip)}>*/}
-                        {/*音乐解析需要几秒时间，然后就会自动播放啦~*/}
-                    {/*</div>*/}
-                </div>
-                <div className={css(styles.player)}>
-                    <div className={css(styles.playerProgress)}>
-                        <div className={css(styles.time)}>{currentTime}</div>
-                        <div className={css(styles.singRange)}>
-                            <Slider
-                                style={
-                                    {cursor: 'pointer'}
-                                }
-                                value={progress}
-                                trackStyle={[{backgroundColor: '#31c27c'}]}
-                                railStyle={{backgroundColor: '#ccc'}}
-                                onAfterChange={this.playerSliderAfterChange.bind(this)}
-                                onChange={this.playerSliderChange.bind(this)}
-                                // handleStyle={[{backgroundColor: '#31c27c'}]}
-                                // dotStyle={{backgroundColor: '#ccc'}}
-                                // activeDotStyle={{backgroundColor: '#31c27c', color: '#31c27c'}}
-                            />
+                <div className={css(styles.main)}>
+                    <div className={css(styles.main_left)}>
+                        <div className={css(styles.list)}>
+                            <ul className={css(styles.list_header)}>
+                                <li className={css(styles.list_song)}>歌曲</li>
+                                <li className={css(styles.list_singer)}>歌手</li>
+                                <li className={css(styles.list_time)}>时长</li>
+                            </ul>
+                            <ul className={css(styles.list_items)}>
+                                <li className={css(styles.list_item)}>
+                                    <span className={css(styles.item_title)}>告白气球</span>
+                                    <span className={css(styles.item_author)}>周杰伦</span>
+                                    <span className={css(styles.item_time)}>03:88</span>
+                                    <span className={css(styles.item_num)}>1</span>
+                                </li>
+                                <li className={css(styles.list_item)}>
+                                    <span className={css(styles.item_title)}>告白气球</span>
+                                    <span className={css(styles.item_author)}>周杰伦</span>
+                                    <span className={css(styles.item_time)}>03:88</span>
+                                    <span className={css(styles.item_num)}>1</span>
+                                </li>
+                                <li className={css(styles.list_item)}>
+                                    <span className={css(styles.item_title)}>告白气球</span>
+                                    <span className={css(styles.item_author)}>周杰伦</span>
+                                    <span className={css(styles.item_time)}>03:88</span>
+                                    <span className={css(styles.item_num)}>1</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div className={css(styles.time)}>{durationTime}</div>
                     </div>
-                    <div className={css(styles.playerControl)}>
-                        {this.state.singStatus ?
-                            <IconFont type="icon-danquxunhuan2" className={css(styles.playerStatus)} onClick={this.playerStatus.bind(this)}/>
-                            :
-                            <IconFont type="icon-liebiaoxunhuan" className={css(styles.playerStatus)} onClick={this.playerStatus.bind(this)}/>
-                        }
-                        <IconFont type="icon-shangyishou1" className={css(styles.playerIcon)} onClick={this.prevSing.bind(this)}/>
-                        {this.state.isPlay ?
-                            <IconFont type="icon-g-status-zanting" className={css(styles.playerIcon)} onClick={this.play.bind(this)}/>
-                            :
-                            <IconFont type="icon-bofang4" className={css(styles.playerIcon)} onClick={this.play.bind(this)}/>
-                        }
-                        <IconFont type="icon-xiayishou3" className={css(styles.playerIcon)} onClick={this.nextSing.bind(this)}/>
+                    <div className={css(styles.main_right)}>
+                        <img className={css(styles.img)} src={this.state.singPic} alt="" onError={this.imgOnError.bind(this)} ref={(val) => this.playerImg = val}/>
+                        <div className={css(styles.song_detail)}>
+                            <p className={css(styles.song_item)}>歌曲名：告白气球</p>
+                            <p className={css(styles.song_item)}>歌手名：周杰伦</p>
+                            <p className={css(styles.song_item)}>专辑名：气球在飞</p>
+                        </div>
                     </div>
                 </div>
+                {/*<div className={css(styles.container_left)}>*/}
+                    {/*<div className={css(styles.container_title)}>播放列表</div>*/}
+                    {/*<div className={css(styles.container_list)}>*/}
+                        {/*<span className={css(styles.list_sing)}>歌曲</span>*/}
+                        {/*<span className={css(styles.list_singer)}>歌手</span>*/}
+                        {/*/!*<span className={css(styles.list_player)}>操作</span>*!/*/}
+                    {/*</div>*/}
+                    {/*<ul>*/}
+                        {/*{this.state.playList.map((val, index) => {*/}
+                            {/*return <li className={css(styles.player_list)} key={index}>*/}
+                                {/*<span className={css(styles.list_sing)}>{val.singTitle}</span>*/}
+                                {/*<span className={css(styles.list_singer)}>{val.singAuthor}</span>*/}
+                                {/*{*/}
+                                    {/*val.playStatus ?*/}
+                                        {/*<IconFont className={css(styles.list_player) + ' list_player'} type="icon-zanting9" onClick={this.startPlay.bind(this, val)}/>*/}
+                                        {/*:*/}
+                                        {/*<IconFont className={css(styles.list_player) + ' list_player'} type="icon-zanting8" onClick={this.startPlay.bind(this, val)}/>*/}
+                                {/*}*/}
+                                {/*<IconFont className={css(styles.list_player) + ' list_player'} type="icon-shanchu2" onClick={this.deletePlay.bind(this, val)}/>*/}
+                            {/*</li>*/}
+                        {/*})}*/}
+                    {/*</ul>*/}
+                {/*</div>*/}
+                {/*<div className={css(styles.container_right)}>*/}
+                    {/*<div className={css(styles.singImg)}>*/}
+                        {/*<img className={css(styles.img)} src={this.state.singPic} alt="" onError={this.imgOnError.bind(this)} ref={(val) => this.playerImg = val}/>*/}
+                    {/*</div>*/}
+                    {/*<div className={css(styles.singAuthor)}>*/}
+                        {/*<span>{this.state.singTitle}</span>*/}
+                        {/*<span style={{padding: '0 10px'}}>——</span>*/}
+                        {/*<span>{this.state.singAuthor}</span>*/}
+                    {/*</div>*/}
+                    {/*<div className={css(styles.singLrc)}>*/}
+                        {/*<ul className={css(styles.singLrcList)}>*/}
+                            {/*{this.state.showSingLrc.map((val,index) => {*/}
+                                {/*return <li key={index} className={moment(this.state.currentTime).get('millisecond') >= moment(parseInt(val.time) / 1000).get('millisecond')? css(styles.singLrcActive, styles.singLrcItems) : css(styles.singLrcItems)}>{val.txt}</li>*/}
+                            {/*})}*/}
+                        {/*</ul>*/}
+                    {/*</div>*/}
+                    {/*/!*<div className={css(styles.singTip)}>*!/*/}
+                        {/*/!*音乐解析需要几秒时间，然后就会自动播放啦~*!/*/}
+                    {/*/!*</div>*!/*/}
+                {/*</div>*/}
+                {/*<div className={css(styles.player)}>*/}
+                    {/*<div className={css(styles.playerProgress)}>*/}
+                        {/*<div className={css(styles.time)}>{currentTime}</div>*/}
+                        {/*<div className={css(styles.singRange)}>*/}
+                            {/*<Slider*/}
+                                {/*style={*/}
+                                    {/*{cursor: 'pointer'}*/}
+                                {/*}*/}
+                                {/*value={progress}*/}
+                                {/*trackStyle={[{backgroundColor: '#31c27c'}]}*/}
+                                {/*railStyle={{backgroundColor: '#ccc'}}*/}
+                                {/*onAfterChange={this.playerSliderAfterChange.bind(this)}*/}
+                                {/*onChange={this.playerSliderChange.bind(this)}*/}
+                                {/*// handleStyle={[{backgroundColor: '#31c27c'}]}*/}
+                                {/*// dotStyle={{backgroundColor: '#ccc'}}*/}
+                                {/*// activeDotStyle={{backgroundColor: '#31c27c', color: '#31c27c'}}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                        {/*<div className={css(styles.time)}>{durationTime}</div>*/}
+                    {/*</div>*/}
+                    {/*<div className={css(styles.playerControl)}>*/}
+                        {/*{this.state.singStatus ?*/}
+                            {/*<IconFont type="icon-danquxunhuan2" className={css(styles.playerStatus)} onClick={this.playerStatus.bind(this)}/>*/}
+                            {/*:*/}
+                            {/*<IconFont type="icon-liebiaoxunhuan" className={css(styles.playerStatus)} onClick={this.playerStatus.bind(this)}/>*/}
+                        {/*}*/}
+                        {/*<IconFont type="icon-shangyishou1" className={css(styles.playerIcon)} onClick={this.prevSing.bind(this)}/>*/}
+                        {/*{this.state.isPlay ?*/}
+                            {/*<IconFont type="icon-g-status-zanting" className={css(styles.playerIcon)} onClick={this.play.bind(this)}/>*/}
+                            {/*:*/}
+                            {/*<IconFont type="icon-bofang4" className={css(styles.playerIcon)} onClick={this.play.bind(this)}/>*/}
+                        {/*}*/}
+                        {/*<IconFont type="icon-xiayishou3" className={css(styles.playerIcon)} onClick={this.nextSing.bind(this)}/>*/}
+                    {/*</div>*/}
+                {/*</div>*/}
             </div>
         )
     }
@@ -345,162 +385,240 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(Player)
 const styles = StyleSheet.create({
     container: {
-        width: '1000px',
+        background: `url(${musicBg}) no-repeat center center`,
+        height: '100%',
+        width: '100%',
+
+    },
+    main: {
+        width: '1100px',
         margin: '0 auto',
+        paddingTop: '10px',
         display: 'flex',
-        // paddingBottom: '30px'
     },
-    container_left: {
-        width: '590px',
-        height: '450px',
-        marginTop: '10px',
-        paddingLeft: '10px',
-        overflowY: 'auto',
-        overflowX: 'hidden',
+    main_left: {
+        width: '800px',
     },
-    container_right: {
-        width: '400px',
-        height: '450px',
-        // borderLeft: '1px solid rgba(255,255,255, 0.4)'
-    },
-    container_title: {
+    list: {},
+    list_header: {
         display: 'flex',
-        height: '30px',
-        alignItems: 'center',
-        position: 'sticky',
-        top: '0',
-        backgroundColor: '#f1f1f1',
-        justifyContent: 'center',
-    },
-    container_list: {
-        display: 'flex',
-        height: '40px',
-        alignItems: 'center',
-        position: 'sticky',
-        top: '30px',
-        backgroundColor: '#f1f1f1',
+        paddingLeft: '80px',
         // paddingBottom: '10px',
-        // position: '-webkit-sticky',
+        height: '40px',
+        lineHeight: '40px',
+        borderBottom: '1px solid #f1f1f1',
+        fontSize: '14px',
+        // width: '100%',
     },
-    player_list: {
-        display: 'flex',
-        alignItems: 'center',
-        height: '50px',
-        ':hover': {
-            color: '#31c27c'
-        },
-        ':hover .list_player': {
-            display: 'block',
-        }
-        // borderBottom: '1px solid rgba(255,255,255, 0.4)'
-    },
-    list_sing: {
-        width: '180px',
-        paddingRight: '20px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
+    list_song: {
+        width: '400px',
     },
     list_singer: {
-        width: '200px',
+        width: '200px'
+    },
+    list_time: {
+        width: '100px'
+    },
+    main_right: {
+        width: '250px',
         paddingLeft: '50px'
     },
-    list_player: {
-        // width: '100px',
-        display: 'none',
-        cursor: 'pointer',
-        color: '#777',
-        fontSize: '32px',
-        marginRight: '10px',
+    img: {
+        width: '250px',
+    },
+    song_detail: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column'
+    },
+    song_item: {
+        paddingTop: '10px',
+        color: '#888889'
+    },
+    list_items: {
+    },
+    list_item: {
+        // width: '100%',
+        paddingLeft: '80px',
+        height: '50px',
+        lineHeight: '50px',
+        display: 'flex',
+        alignItems: 'center',
+        fontSize: '14px',
+        position: 'relative',
+        ':nth-child(2n+1)': {
+            backgroundColor: '#fff9f9',
+        },
         ':hover': {
-            color: '#31c27c'
+            cursor: 'pointer'
         }
     },
-    singImg: {
-        // width: '500px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: '20px 0'
-    },
-    singAuthor: {
-        textAlign: 'center',
-        paddingBottom: '20px',
-        fontSize: '20px',
-    },
-    singLrc: {
-        fontSize: '20px',
-        textAlign: 'center',
-        paddingBottom: '20px',
-        height: '150px',
-        overflowY: 'scroll'
-    },
-    singTip: {
-        marginTop: '10px',
-        textAlign: 'center'
-    },
-    img: {
-        // width: '300px',
-        height: '200px'
-    },
-    player: {
-        position: 'fixed',
-        bottom: '20px',
-        left: 0,
-        right: 0,
-        minWidth: '1000px'
-    },
-    playerControl: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+    item_title: {
         width: '400px',
-        margin: '0 auto',
-        position: 'relative',
     },
-    playerIcon: {
-        fontSize: '50px',
-        color: '#31c27c',
-        cursor: 'pointer'
+    item_author: {
+        width: '200px'
     },
-    playerStatus: {
-        fontSize: '30px',
-        color: '#31c27c',
-        cursor: 'pointer',
+    item_time: {
+        width: '100px'
+    },
+    item_num: {
         position: 'absolute',
-        left: '-200px',
-    },
-    playerProgress: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '70px',
-        // padding: '0 20px'
-    },
-    playerRight: {
-
-    },
-    singRange: {
-        // flex: 1,
-        width: '780px',
-        padding: '0 10px 3px',
-    },
-    range: {
-        width: '100%'
-    },
-    time: {
-        fontSize: '20px',
-        width: '50px',
-        textAlign: 'center'
-    },
-    singLrcActive: {
-        color: '#31c27c',
-        // fontWeight: 'bold',
-    },
-    singLrcList: {
-
-    },
-    singLrcItems: {
-        marginTop: '10px'
+        left: '40px',
+        fontSize: '14px'
     }
+    // container_left: {
+    //     width: '590px',
+    //     height: '450px',
+    //     marginTop: '10px',
+    //     paddingLeft: '10px',
+    //     overflowY: 'auto',
+    //     overflowX: 'hidden',
+    // },
+    // container_right: {
+    //     width: '400px',
+    //     height: '450px',
+    //     // borderLeft: '1px solid rgba(255,255,255, 0.4)'
+    // },
+    // container_title: {
+    //     display: 'flex',
+    //     height: '30px',
+    //     alignItems: 'center',
+    //     position: 'sticky',
+    //     top: '0',
+    //     backgroundColor: '#f1f1f1',
+    //     justifyContent: 'center',
+    // },
+    // container_list: {
+    //     display: 'flex',
+    //     height: '40px',
+    //     alignItems: 'center',
+    //     position: 'sticky',
+    //     top: '30px',
+    //     backgroundColor: '#f1f1f1',
+    //     // paddingBottom: '10px',
+    //     // position: '-webkit-sticky',
+    // },
+    // player_list: {
+    //     display: 'flex',
+    //     alignItems: 'center',
+    //     height: '50px',
+    //     ':hover': {
+    //         color: '#31c27c'
+    //     },
+    //     ':hover .list_player': {
+    //         display: 'block',
+    //     }
+    //     // borderBottom: '1px solid rgba(255,255,255, 0.4)'
+    // },
+    // list_sing: {
+    //     width: '180px',
+    //     paddingRight: '20px',
+    //     overflow: 'hidden',
+    //     textOverflow: 'ellipsis',
+    //     whiteSpace: 'nowrap',
+    // },
+    // list_singer: {
+    //     width: '200px',
+    //     paddingLeft: '50px'
+    // },
+    // list_player: {
+    //     // width: '100px',
+    //     display: 'none',
+    //     cursor: 'pointer',
+    //     color: '#777',
+    //     fontSize: '32px',
+    //     marginRight: '10px',
+    //     ':hover': {
+    //         color: '#31c27c'
+    //     }
+    // },
+    // singImg: {
+    //     // width: '500px',
+    //     display: 'flex',
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     margin: '20px 0'
+    // },
+    // singAuthor: {
+    //     textAlign: 'center',
+    //     paddingBottom: '20px',
+    //     fontSize: '20px',
+    // },
+    // singLrc: {
+    //     fontSize: '20px',
+    //     textAlign: 'center',
+    //     paddingBottom: '20px',
+    //     height: '150px',
+    //     overflowY: 'scroll'
+    // },
+    // singTip: {
+    //     marginTop: '10px',
+    //     textAlign: 'center'
+    // },
+    // img: {
+    //     // width: '300px',
+    //     height: '200px'
+    // },
+    // player: {
+    //     position: 'fixed',
+    //     bottom: '20px',
+    //     left: 0,
+    //     right: 0,
+    //     minWidth: '1000px'
+    // },
+    // playerControl: {
+    //     display: 'flex',
+    //     alignItems: 'center',
+    //     justifyContent: 'space-between',
+    //     width: '400px',
+    //     margin: '0 auto',
+    //     position: 'relative',
+    // },
+    // playerIcon: {
+    //     fontSize: '50px',
+    //     color: '#31c27c',
+    //     cursor: 'pointer'
+    // },
+    // playerStatus: {
+    //     fontSize: '30px',
+    //     color: '#31c27c',
+    //     cursor: 'pointer',
+    //     position: 'absolute',
+    //     left: '-200px',
+    // },
+    // playerProgress: {
+    //     display: 'flex',
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     height: '70px',
+    //     // padding: '0 20px'
+    // },
+    // playerRight: {
+    //
+    // },
+    // singRange: {
+    //     // flex: 1,
+    //     width: '780px',
+    //     padding: '0 10px 3px',
+    // },
+    // range: {
+    //     width: '100%'
+    // },
+    // time: {
+    //     fontSize: '20px',
+    //     width: '50px',
+    //     textAlign: 'center'
+    // },
+    // singLrcActive: {
+    //     color: '#31c27c',
+    //     // fontWeight: 'bold',
+    // },
+    // singLrcList: {
+    //
+    // },
+    // singLrcItems: {
+    //     marginTop: '10px'
+    // }
 });
