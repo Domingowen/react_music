@@ -181,7 +181,7 @@ class AudioPlayer extends Component {
             this.state.singUrl ?
                 <audio
                     style={{display: 'none'}}
-                    src={this.state.singUrl}
+                    // src={this.state.singUrl}
                     // id="Audio"
                     preload={'auto'}
                     onLoadStart={this.playProgress.bind(this)}

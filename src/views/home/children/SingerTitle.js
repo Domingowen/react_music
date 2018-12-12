@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, css} from "aphrodite";
-import axios from 'axios';
+// import axios from 'axios';
 export default class SingerTitle extends Component {
     constructor(props) {
         super(props);

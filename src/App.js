@@ -6,7 +6,7 @@ import Header from './components/header/index';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {StyleSheet, css} from 'aphrodite';
 import RouteList from './router';
-import './assets/iconfont.css';
+// import './assets/iconfont.css';
 
 class App extends Component {
     constructor (props) {

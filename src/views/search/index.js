@@ -10,9 +10,8 @@ import 'antd/lib/spin/style/index.css';
 import 'antd/lib/message/style/index.css';
 import Icon from 'antd/lib/icon';
 import Player from "../../redux/reducer/player";
-
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_4865y8hzytg.js'
+    scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
 class Search extends Component{
     constructor(props) {
@@ -48,40 +47,6 @@ class Search extends Component{
         }).catch(err => {
             console.log(err);
         });
-        // axios({
-        //     url: 'http://192.168.0.131:20200/v1/music/music_song_url2',
-        //     method: 'post',
-        //     data: {
-        //         songmid: item.songmid
-        //     }
-        // }).then(res => {
-        //     console.log(res);
-        // }).catch(err => {
-        //     console.log(err);
-        // });
-        // axios({
-        //     url: 'http://192.168.0.131:20200/v1/music/music_song_url',
-        //     method: 'post',
-        //     data: {
-        //         songmid: item.songmid
-        //     }
-        // }).then(res => {
-        //     console.log(res.data.data);
-        //     // `https://dl.stream.qqmusic.qq.com/C600003OUlho2HcRHC.m4a?vkey=79B5BA25596C8228D6D228170C567CF5418224CC63E4E751232C74CD2DF9C521D7007D214AB0F1563D21C8E9C34B6B6217AD1C9F43C1405A&guid=1543080947&uid=0&fromtag=30`
-        // }).catch(err => {
-        //     console.log(err);
-        // });
-        // axios({
-        //     url: 'http://192.168.0.131:20200/v1/music/music_song_key',
-        //     method: 'post',
-        //     data: {}
-        // }).then(res => {
-        //     console.log(res.data.data);
-        //     // `https://dl.stream.qqmusic.qq.com/C600003OUlho2HcRHC.m4a?vkey=79B5BA25596C8228D6D228170C567CF5418224CC63E4E751232C74CD2DF9C521D7007D214AB0F1563D21C8E9C34B6B6217AD1C9F43C1405A&guid=1543080947&uid=0&fromtag=30`
-        // }).catch(err => {
-        //     console.log(err);
-        // })
-
         let playerItem = {
             singId: item.songmid, // 音乐ID
             singPic: `https://api.bzqll.com/music/tencent/pic?key=579621905&id=${item.songmid}`,
@@ -99,42 +64,36 @@ class Search extends Component{
         }
         this.props.player(playerItem);
         Message.success(`${playerItem.singTitle}，准备播放`);
-        // this.props.changeAudioControl({
-        //     isPlayer: true,
-        // });
-        // let searchList = this.state.searchList.map((val, index) => {
-        //     if (val.songid === item.songid) {
-        //         console.log(val);
-        //         return Object.assign(val, {
-        //             isPlay: true
-        //         })
-        //     } else {
-        //         return Object.assign(val, {
-        //             isPlay: false
-        //         })
-        //     }
-        // });
-        // console.log(this.props);
-        // this.setState({
-        //     searchList: searchList
-        // })
+
     }
-    add (item) {
-        let items = {
-            singId: item.songid,
-            singPic: item.pic,
-            singAuthor: item.author,
-            singLrc: item.lrc,
-            singUrl: item.url,
-            singTitle: item.title
-        };
-        if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-            this.props.addPlayerList(items);
-            Message.success(`${items.singTitle}，已添加到播放列表`, 1);
-        } else {
-            Message.error(`${items.singTitle}，已在播放列表中`, 1);
-        }
-    }
+    // async add (item) {
+    //     let lrc = await axios({ // 获取歌词
+    //         url: 'http://192.168.0.131:20200/v1/music/music_song_lrc2',
+    //         method: 'post',
+    //         data: {
+    //             songmid: item.songmid
+    //         }
+    //     }).then(res => {
+    //         console.log(res);
+    //         return res.data.data;
+    //     }).catch(err => {
+    //         console.log(err);
+    //     });
+    //     let items = {
+    //         singId: item.songid,
+    //         singPic: item.pic,
+    //         singAuthor: item.author,
+    //         singLrc: item.lrc,
+    //         singUrl: item.url,
+    //         singTitle: item.title
+    //     };
+    //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+    //         this.props.addPlayerList(items);
+    //         Message.success(`${items.singTitle}，已添加到播放列表`, 1);
+    //     } else {
+    //         Message.error(`${items.singTitle}，已在播放列表中`, 1);
+    //     }
+    // }
     getData () {
         axios({
             method: 'post',
@@ -252,7 +211,7 @@ class Search extends Component{
                                     :
                                     <IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
                                 }
-                                <IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.add.bind(this, val)}/>
+                                <IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
 
                             </div>
                         </div>

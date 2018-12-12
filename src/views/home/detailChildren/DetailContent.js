@@ -3,7 +3,7 @@ import {StyleSheet, css}from 'aphrodite';
 // import axios from 'axios';
 import Icon from 'antd/lib/icon';
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_4mhmkt79fw5.js'
+    scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
 export default class DetailContent extends Component {
     constructor(props) {

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {StyleSheet, css}from 'aphrodite';
 import Icon from 'antd/lib/icon';
-const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_4mhmkt79fw5.js'
-});
+// const IconFont = Icon.createFromIconfontCN({
+//     scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.css'
+// });
 export default class SingerAlbumList extends Component {
     constructor(props) {
         super(props);

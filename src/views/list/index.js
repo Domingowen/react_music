@@ -6,7 +6,7 @@ import Icon from 'antd/lib/icon';
 import Message from 'antd/lib/message';
 import 'antd/lib/message/style/index.css';
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_4k7vimuo3l6.js'
+    scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
 class List extends Component{
     constructor (props) {

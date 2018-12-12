@@ -18,7 +18,7 @@ import NewSongList from './NewSongList.js';
 import NewAlbumList from './NewAlbumList.js';
 import RangeList from './RangeList.js';
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_862212_9vv1j1sakel.js'
+    scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
 
 class Main extends Component {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, css}from 'aphrodite';
-import axios from 'axios';
-import Icon from 'antd/lib/icon';
+// import axios from 'axios';
+// import Icon from 'antd/lib/icon';
 export default class DetailTitle extends Component {
     constructor(props) {
         super(props);
