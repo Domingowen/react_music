@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: '30px',
         fontWeight: 'bold',
+        letterSpacing: '10px'
     },
     menu: {
         display: 'flex',

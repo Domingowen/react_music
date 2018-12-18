@@ -5,6 +5,7 @@ import {player, deleteItem, audio_player, audio_control} from '../../redux/actio
 import Icon from 'antd/lib/icon';
 import Message from 'antd/lib/message';
 import 'antd/lib/message/style/index.css';
+import musicBg from "../../assets/music_player_bg.jpg";
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
@@ -35,39 +36,42 @@ class List extends Component{
         console.log(this.props);
         return (
             <div className={css(styles.container)}>
-                {this.props.playerList.length > 0 ?
-                    <div className={css(styles.list_title)}>
-                        <span className={css(styles.title_song)}>歌曲</span>
-                        <span className={css(styles.title_singer)}>歌手</span>
-                        <span className={css(styles.title_album)}>专辑</span>
-                        <span className={css(styles.title_time)}>时长</span>
-                    </div>
-                    : null
-                }
-
-                <ul className={css(styles.list)}>
+                <div className={css(styles.content)}>
                     {this.props.playerList.length > 0 ?
-                        this.props.playerList.map((val, index) => {
-                            return  <li className={css(styles.list_item)} key={index}>
-                                <span className={css(styles.item_song)}>{val.singTitle}&nbsp;{val.singLyric}</span>
-                                <span className={css(styles.item_singer)}>{val.singAuthor}</span>
-                                <span className={css(styles.item_album)}>{val.singAlbum}</span>
-                                <span className={css(styles.item_time)}>{this.timeFormat(val.singInterval)}</span>
-                                {/*<img className={css(styles.item_album)} src={val.pic} alt=""/>*/}
-                                <div className={css(styles.item_playControl)}>
-                                    {/*{val.isPlay ?*/}
+                        <div className={css(styles.list_title)}>
+                            <span className={css(styles.title_song)}>歌曲</span>
+                            <span className={css(styles.title_singer)}>歌手</span>
+                            <span className={css(styles.title_album)}>专辑</span>
+                            <span className={css(styles.title_time)}>时长</span>
+                        </div>
+                        : null
+                    }
+                    <ul className={css(styles.list)}>
+                        {this.props.playerList.length > 0 ?
+                            this.props.playerList.map((val, index) => {
+                                return  <li className={css(styles.list_item)} key={index}>
+                                    <span className={css(styles.item_song)}>{val.singTitle}&nbsp;{val.singLyric}</span>
+                                    <span className={css(styles.item_singer)}>{val.singAuthor}</span>
+                                    <span className={css(styles.item_album)}>{val.singAlbum}</span>
+                                    <span className={css(styles.item_time)}>{this.timeFormat(val.singInterval)}</span>
+                                    <span className={css(styles.item_num)}>{index + 1}</span>
+                                    {/*<img className={css(styles.item_album)} src={val.pic} alt=""/>*/}
+                                    <div className={css(styles.item_playControl)}>
+                                        {/*{val.isPlay ?*/}
                                         {/*<IconFont type="icon-zanting9" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>*/}
                                         {/*:*/}
                                         {/*<IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>*/}
-                                    {/*}*/}
-                                    {/*<IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.add.bind(this, val)}/>*/}
+                                        {/*}*/}
+                                        {/*<IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.add.bind(this, val)}/>*/}
 
-                                </div>
-                            </li>
-                        })
-                        : <li style={{height: '400px', lineHeight: '400px', textAlign: 'center'}}>当前播放列表为空</li>
-                    }
-                </ul>
+                                    </div>
+                                </li>
+                            })
+                            : <li style={{height: '400px', lineHeight: '400px', textAlign: 'center'}}>当前播放列表为空</li>
+                        }
+                    </ul>
+                </div>
+
             </div>
         )
     }
@@ -100,10 +104,25 @@ export default connect(mapStateToProps, mapDispatchToProps)(List)
 
 const styles = StyleSheet.create({
     container: {
+        background: `url(${musicBg}) no-repeat center center`,
+        height: '100%',
+        width: '100%',
+        overflow: 'auto',
+        '::-webkit-scrollbar': {
+            height: '3px',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            width: '6px',
+        },
+        '::-webkit-scrollbar-thumb': {
+            background: '#31c27c',
+            borderRadius: '5px',
+        }
+    },
+    content: {
         width: '1100px',
         margin: '0 auto'
     },
-
     list: {
         width: '1100px',
         margin: '0 auto',
@@ -118,7 +137,7 @@ const styles = StyleSheet.create({
     },
     title_song: {
         width: '400px',
-        paddingLeft: '10px'
+        paddingLeft: '50px'
     },
     title_singer: {
         width: '200px',
@@ -145,13 +164,13 @@ const styles = StyleSheet.create({
         ':hover .item_play': {
             display: 'block'
         },
-        ':nth-child(2n)': {
-            backgroundColor: 'rgba(0,0,0,0.01)'
+        ':nth-child(2n+1)': {
+            backgroundColor: '#fff9f9',
         }
     },
     item_song: {
         width: '400px',
-        paddingLeft: '10px'
+        paddingLeft: '50px'
     },
     item_singer:{
         width: '200px',
@@ -182,4 +201,8 @@ const styles = StyleSheet.create({
         right: 0,
         display: 'flex',
     },
+    item_num: {
+        position: 'absolute',
+        left: '20px',
+    }
 });

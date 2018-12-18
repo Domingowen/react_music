@@ -2,10 +2,14 @@ import React, {Component} from 'react';
 import {StyleSheet, css} from "aphrodite";
 import axios from 'axios';
 import Icon from "antd/lib/icon";
+import _ from "lodash";
+import Message from "antd/lib/message";
+import {connect} from 'react-redux';
+import {add_player, player, audio_player, audio_control} from '../../../redux/actions';
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
-export default class RangeList extends Component {
+class RangeList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -86,6 +90,70 @@ export default class RangeList extends Component {
         }
         return `${currentMin}:${currentSec}`;
     }
+    async play (item) {
+        console.log(item);
+        let lrc = await axios({ // 获取歌词
+            url: 'http://192.168.0.131:20200/v1/music/music_song_lrc2',
+            method: 'post',
+            data: {
+                songmid: item.data.songmid
+            }
+        }).then(res => {
+            console.log(res);
+            return res.data.data;
+        }).catch(err => {
+            console.log(err);
+        });
+        let playerItem = {
+            singId: item.data.songmid, // 音乐ID
+            singPic: `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.data.albummid}.jpg`,
+            singAuthor: `${item.data.singer.map(val => val.name)}`,
+            singLrc: lrc,
+            singUrl: `https://api.bzqll.com/music/tencent/url?key=579621905&id=${item.data.songmid}&br=192`,
+            singTitle: `${item.data.songname}`,
+            singLyric: `${item.data.lyric ? item.data.lyric : ''}`,
+            singInterval: item.data.interval,
+            singAlbum: item.data.albumname ? item.data.albumname : null
+        };
+        console.log(playerItem);
+        if (_.findIndex(this.props.playerList, {singId: playerItem.singId}) === -1) {
+            this.props.addPlayerList(playerItem);
+        }
+        this.props.player(playerItem);
+        Message.success(`${playerItem.singTitle}，准备播放`);
+
+    }
+    async add (item) {
+        let lrc = await axios({ // 获取歌词
+            url: 'http://192.168.0.131:20200/v1/music/music_song_lrc2',
+            method: 'post',
+            data: {
+                songmid: item.data.songmid
+            }
+        }).then(res => {
+            console.log(res);
+            return res.data.data;
+        }).catch(err => {
+            console.log(err);
+        });
+        let items = {
+            singId: item.data.songmid, // 音乐ID
+            singPic: `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.data.albummid}.jpg`, // 图片
+            singAuthor: `${item.data.singer.map(val => val.name)}`, // 作者
+            singLrc: lrc,
+            singUrl: `https://api.bzqll.com/music/tencent/url?key=579621905&id=${item.data.songmid}&br=192`, // 链接
+            singTitle: `${item.data.songname}`,
+            singLyric: `${item.data.lyric ? item.data.lyric : ''}`,
+            singInterval: item.data.interval,
+            singAlbum: item.data.albumname ? item.data.albumname : null
+        };
+        if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+            this.props.addPlayerList(items);
+            Message.success(`${items.singTitle}，已添加到播放列表`, 1);
+        } else {
+            Message.error(`${items.singTitle}，已在播放列表中`, 1);
+        }
+    }
     render () {
         return (
             <div className={css(styles.container)}>
@@ -118,8 +186,14 @@ export default class RangeList extends Component {
                                     <img className={css(styles.list_item_img)} src={`//y.gtimg.cn/music/photo_new/T002R150x150M000${val.data.albummid}.jpg?max_age=2592000`} alt=""/>
                                     <span className={css(styles.list_item_name)}>{val.data.songname}{val.data.albumdesc}</span>
                                     <div className={css(styles.list_control_play)}>
-                                        <IconFont type={'icon-zanting8'} className={css(styles.list_item_icon) + ' list_item_active'}/>
-                                        <IconFont type={'icon-tianjia2'} className={css(styles.list_item_icon) + ' list_item_active'}/>
+                                        <IconFont type={'icon-zanting8'}
+                                                  className={css(styles.list_item_icon) + ' list_item_active'}
+                                                  onClick={this.play.bind(this, val)}
+                                        />
+                                        <IconFont type={'icon-tianjia2'}
+                                                  className={css(styles.list_item_icon) + ' list_item_active'}
+                                                  onClick={this.add.bind(this, val)}
+                                        />
                                     </div>
                                 </div>
                                 <div className={css(styles.list_item_singer)}>
@@ -139,6 +213,16 @@ export default class RangeList extends Component {
         )
     }
 }
+const mapStateToProps = state => ({
+    playerList: state.Player.list
+});
+const mapDispatchToProps = dispatch => ({
+    addPlayerList: item => dispatch(add_player(item)),
+    player: item => dispatch(player(item)),
+    // addAudio: item => dispatch(audio_player(item)),
+    changeAudioControl: item => dispatch(audio_control(item))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(RangeList)
 const styles = StyleSheet.create({
     container: {
         display: 'flex',

@@ -1,27 +1,28 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import 'antd/lib/carousel/style/index.css';
 import Icon from 'antd/lib/icon';
-import _ from 'lodash';
-import {player, add_player, audio_control} from '../../redux/actions';
-import {connect} from 'react-redux';
+import 'antd/lib/carousel/style/index.css';
+// import _ from 'lodash';
+// import {player, add_player, audio_control} from '../../redux/actions';
+// import {connect} from 'react-redux';
 // import { message, Button } from 'antd';
-import Message from 'antd/lib/message';
-import Notification from 'antd/lib/notification';
-import Button from 'antd/lib/button';
-import 'antd/lib/message/style/index.css';
-import 'antd/lib/button/style/index.css';
-import 'antd/lib/notification/style/index.css';
-import HeadNav from './HeadNav.js';
+// import Message from 'antd/lib/message';
+// import Notification from 'antd/lib/notification';
+// import Button from 'antd/lib/button';
+// import 'antd/lib/message/style/index.css';
+// import 'antd/lib/button/style/index.css';
+// import 'antd/lib/notification/style/index.css';
+// import HeadNav from './HeadNav.js';
 import RecommendList from './RecommendList.js';
 import NewSongList from './NewSongList.js';
 import NewAlbumList from './NewAlbumList.js';
 import RangeList from './RangeList.js';
+// import UpToTop from '../../components/UpToTop.js';
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
 
-class Main extends Component {
+export default class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -45,114 +46,6 @@ class Main extends Component {
             },
 
         }
-    }
-    handleDetailSingRecommend (val) {
-        // console.log(val);
-        // this.props.history.push({
-        //     pathname: '/home/detail',
-        //     state: {
-        //         item: val,
-        //         type: 'rec'
-        //
-        //     }
-        // })
-    }
-    handleDetailSingNew (val) {
-        // console.log(val);
-        // this.props.history.push("/home/detail")
-    }
-    handleDetailSingAlbum (val) {
-        // console.log(val);
-        // this.props.history.push({
-        //     pathname: '/home/detail',
-        //     state: {
-        //         item: val,
-        //         type: 'album'
-        //     }
-        // })
-        // this.props.history.push("/home/detail")
-    }
-    handlePlayNewSong (val) {
-        // console.log(val);
-        // const hide = Message.loading('正在请求音乐数据..', 0);
-        // axios({
-        //     method: 'post',
-        //     url: 'http://192.168.0.131:20200/v1/music/search',
-        //     data: {
-        //         search: val.mid,
-        //         filter: 'id',
-        //         type: 'qq',
-        //         page: 1,
-        //     }
-        // }).then(res => {
-        //     console.log(res.data.data.data);
-        //
-        //     let data = res.data.data.data[0];
-        //     let items = {
-        //         singId: data.songid,
-        //         singPic: data.pic,
-        //         singAuthor: data.author,
-        //         singLrc: data.lrc,
-        //         singUrl: data.url,
-        //         singTitle: data.title,
-        //     };
-        //     this.props.addPlayer(items);
-        //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-        //         this.props.addPlayerList(items);
-        //     }
-        //     this.props.changeControl({
-        //         isPlayer: true,
-        //     });
-        //     // Notification.open({
-        //     //     message: 'Hi',
-        //     //     description: `${items.singTitle} 准备播放~~`,
-        //     //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
-        //     // });
-        //     Message.success(`${items.singTitle}，准备播放`)
-        // }).catch(err => {
-        //     console.log(err);
-        // })
-    }
-    handlePlayPopularSong (val) {
-        // console.log(val);
-        // const hide = Message.loading('正在请求音乐数据..', 0);
-        // axios({
-        //     method: 'post',
-        //     url: 'http://192.168.0.131:20200/v1/music/search',
-        //     data: {
-        //         search: val.data.songmid,
-        //         filter: 'id',
-        //         type: 'qq',
-        //         page: 1,
-        //     }
-        // }).then(res => {
-        //     console.log(res.data.data.data);
-        //     setTimeout(hide, 100);
-        //     let data = res.data.data.data[0];
-        //     let items = {
-        //         singId: data.songid,
-        //         singPic: data.pic,
-        //         singAuthor: data.author,
-        //         singLrc: data.lrc,
-        //         singUrl: data.url,
-        //         singTitle: data.title,
-        //     };
-        //     this.props.addPlayer(items);
-        //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-        //         this.props.addPlayerList(items);
-        //     }
-        //     this.props.changeControl({
-        //         isPlayer: true,
-        //     });
-        //     // Notification.open({
-        //     //     message: 'Hi',
-        //     //     description: `${items.singTitle} 准备播放~~`,
-        //     //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
-        //     // });
-        //     Message.success(`${items.singTitle}，准备播放`)
-        // }).catch(err => {
-        //     console.log(err);
-        // })
     }
     componentDidMount () {
         console.log(this.props);
@@ -262,14 +155,3 @@ class Main extends Component {
         )
     }
 }
-const mapStateToProps = state => ({
-    playerList: state.Player.list,
-});
-const mapDispatchToProps = dispatch => ({
-    addPlayer: item => dispatch(player(item)),
-    addPlayerList: item => dispatch(add_player(item)),
-    // deleteItem: item => dispatch(deleteItem(item)),
-    // addAudio: item => dispatch(audio_player(item)),
-    changeControl: item => dispatch(audio_control(item))
-});
-export default connect(mapStateToProps, mapDispatchToProps)(Main)

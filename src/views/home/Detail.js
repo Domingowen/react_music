@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, css}from 'aphrodite';
 import axios from 'axios';
-// import Icon from 'antd/lib/icon';
 import {connect} from 'react-redux';
 import {
     add_player,
@@ -14,13 +13,11 @@ import {
 
 } from '../../redux/actions';
 import _ from "lodash";
-import Message from "antd/lib/message";
-import 'antd/lib/message/style/index.css';
+// import Message from "antd/lib/message";
+// import 'antd/lib/message/style/index.css';
 import Title from './detailChildren/DetailTitle';
 import Content from './detailChildren/DetailContent';
-// const IconFont = Icon.createFromIconfontCN({
-//     scriptUrl: '//at.alicdn.com/t/font_862212_heepzwrlzhf.js'
-// });
+import Message from "antd/lib/message";
 class Detail extends Component {
     constructor(props) {
         super(props);
@@ -30,7 +27,7 @@ class Detail extends Component {
         }
     }
     componentDidMount () {
-        console.log(this.props.location);
+        // console.log(this.props.location);
         let navigationData = this.props.location.state.item;
         let type = this.props.location.state.type;
         let disstId = navigationData.content_id ? navigationData.content_id : navigationData.tid;
@@ -74,87 +71,107 @@ class Detail extends Component {
                 break;
         }
     }
-    addPlayer (item) {
-        let itemList = this.state.itemList.map(val => {
-            item.songmid === val.songmid ? val.playStatus = true : val.playStatus = false;
-            return val;
-        });
-        this.setState({
-            itemList: itemList
-        });
-        const hide = Message.loading('正在请求音乐数据..', 0);
-        axios({
-            method: 'post',
-            url: 'http://192.168.0.131:20200/v1/music/search',
-            data: {
-                search: item.songmid,
-                filter: 'id',
-                type: 'qq',
-                page: 1
-            }
-        }).then(res => {
-            setTimeout(hide, 100);
-            let data = res.data.data.data[0];
-            let items = {
-                singId: data.songid,
-                singPic: data.pic,
-                singAuthor: data.author,
-                singLrc: data.lrc,
-                singUrl: data.url,
-                singTitle: data.title,
+    addAllPlay () {
+        console.log(this.state.itemData.songlist);
+        this.state.itemData.songlist.forEach((val, index) => {
+            // console.log(val);
+            let playerItem = {
+                singId: val.songmid, // 音乐ID
+                singPic: `http://y.gtimg.cn/music/photo_new/T002R300x300M000${val.albummid}.jpg`,
+                singAuthor: `${val.singer.map(val => val.name)}`,
+                singLrc: null,
+                singUrl: `https://api.bzqll.com/music/tencent/url?key=579621905&id=${val.songmid}&br=192`,
+                singTitle: `${val.songname}`,
+                singLyric: `${val.lyric ? val.lyric : ''}`,
+                singInterval: val.interval,
+                singAlbum: val.albumname ? val.albumname : null
             };
-            this.props.addPlayer(items);
-            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-                this.props.addPlayerList(items);
+            // console.log(playerItem);
+            if (_.findIndex(this.props.playerList, {singId: playerItem.singId}) === -1) {
+                this.props.addPlayerList(playerItem);
             }
-            this.props.changeControl({
-                isPlayer: true,
-            });
-            Message.success(`${items.singTitle}，准备播放`)
-        })
+        });
+        Message.success(`当前歌单，已添加到播放列表`, 1);
     }
-    addPlayerList (item) {
-        axios({
-            method: 'post',
-            url: 'http://192.168.0.131:20200/v1/music/search',
-            data: {
-                search: item.songmid,
-                filter: 'id',
-                type: 'qq',
-                page: 1
-            }
-        }).then(res => {
-            let data = res.data.data.data[0];
-            let items = {
-                singId: data.songid,
-                singPic: data.pic,
-                singAuthor: data.author,
-                singLrc: data.lrc,
-                singUrl: data.url,
-                singTitle: data.title,
-            };
-            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-                this.props.addPlayerList(items);
-                Message.success(`${items.singTitle}，已添加到播放列表`, 1);
-            } else {
-                Message.error(`${items.singTitle}，已在播放列表中`, 1);
-            }
-        })
-    }
+    // addPlayer (item) {
+    //     let itemList = this.state.itemList.map(val => {
+    //         item.songmid === val.songmid ? val.playStatus = true : val.playStatus = false;
+    //         return val;
+    //     });
+    //     this.setState({
+    //         itemList: itemList
+    //     });
+    //     const hide = Message.loading('正在请求音乐数据..', 0);
+    //     axios({
+    //         method: 'post',
+    //         url: 'http://192.168.0.131:20200/v1/music/search',
+    //         data: {
+    //             search: item.songmid,
+    //             filter: 'id',
+    //             type: 'qq',
+    //             page: 1
+    //         }
+    //     }).then(res => {
+    //         setTimeout(hide, 100);
+    //         let data = res.data.data.data[0];
+    //         let items = {
+    //             singId: data.songid,
+    //             singPic: data.pic,
+    //             singAuthor: data.author,
+    //             singLrc: data.lrc,
+    //             singUrl: data.url,
+    //             singTitle: data.title,
+    //         };
+    //         this.props.addPlayer(items);
+    //         if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+    //             this.props.addPlayerList(items);
+    //         }
+    //         this.props.changeControl({
+    //             isPlayer: true,
+    //         });
+    //         Message.success(`${items.singTitle}，准备播放`)
+    //     })
+    // }
+    // addPlayerList (item) {
+    //     axios({
+    //         method: 'post',
+    //         url: 'http://192.168.0.131:20200/v1/music/search',
+    //         data: {
+    //             search: item.songmid,
+    //             filter: 'id',
+    //             type: 'qq',
+    //             page: 1
+    //         }
+    //     }).then(res => {
+    //         let data = res.data.data.data[0];
+    //         let items = {
+    //             singId: data.songid,
+    //             singPic: data.pic,
+    //             singAuthor: data.author,
+    //             singLrc: data.lrc,
+    //             singUrl: data.url,
+    //             singTitle: data.title,
+    //         };
+    //         if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+    //             this.props.addPlayerList(items);
+    //             Message.success(`${items.singTitle}，已添加到播放列表`, 1);
+    //         } else {
+    //             Message.error(`${items.singTitle}，已在播放列表中`, 1);
+    //         }
+    //     })
+    // }
     // createDec() { return {__html: this.state.itemData.desc}; };
     render () {
         return (
             this.state.itemData &&
             <div className={css(styles.container)}>
-                <Title data={this.state.itemData} type={this.state.itemType}/>
+                <Title data={this.state.itemData} type={this.state.itemType} addAllPlay={this.addAllPlay.bind(this)}/>
                 <Content list={this.state.itemData.songlist} type={this.state.itemType}/>
             </div>
         )
-
     }
 }
 const mapStateToProps = state => ({
-    playerData: state.Player,
     playerList: state.Player.list
 });
 const mapDispatchToProps = dispatch => ({

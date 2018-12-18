@@ -3,7 +3,11 @@ import {StyleSheet, css} from "aphrodite";
 import Carousel from "antd/lib/carousel";
 import Title from "./Title.js";
 import axios from "axios";
-export default class NewSongList extends Component {
+import _ from "lodash";
+import Message from "antd/lib/message";
+import {connect} from 'react-redux';
+import {add_player, player, audio_player, audio_control} from '../../redux/actions';
+class NewSongList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -76,6 +80,38 @@ export default class NewSongList extends Component {
             console.log(res);
         });
     }
+    async play (item) {
+        console.log(item);
+        let lrc = await axios({ // 获取歌词
+            url: 'http://192.168.0.131:20200/v1/music/music_song_lrc2',
+            method: 'post',
+            data: {
+                songmid: item.mid
+            }
+        }).then(res => {
+            console.log(res);
+            return res.data.data;
+        }).catch(err => {
+            console.log(err);
+        });
+        let playerItem = {
+            singId: item.mid, // 音乐ID
+            singPic: `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.album.mid}.jpg`,
+            singAuthor: `${item.singer.map(val => val.name)}`,
+            singLrc: lrc,
+            singUrl: `https://api.bzqll.com/music/tencent/url?key=579621905&id=${item.mid}&br=192`,
+            singTitle: `${item.name}`,
+            singLyric: `${item.subtitle}`,
+            singInterval: item.interval,
+            singAlbum: item.album.name ? item.album.name : null
+        };
+        console.log(playerItem);
+        if (_.findIndex(this.props.playerList, {singId: playerItem.singId}) === -1) {
+            this.props.addPlayerList(playerItem);
+        }
+        this.props.player(playerItem);
+        Message.success(`${playerItem.singTitle}，准备播放`);
+    }
     render () {
         return (
             <div className={css(styles.rec_container)}>
@@ -96,7 +132,7 @@ export default class NewSongList extends Component {
                                     <ul className={css(styles.carousel_recommend_list)}>
                                         {val.map((val, oIndex) => {
                                             return <li className={css(styles.carousel_recommend_items)} key={val.mid}
-                                                // onClick={this.handleDetailSingRecommend.bind(this, val)}
+                                                onClick={this.play.bind(this, val)}
                                             >
                                                 <div className={css(styles.carousel_rec_img_content)}>
                                                     <img className={css(styles.carousel_rec_img) + ' imgActive'} src={`//y.gtimg.cn/music/photo_new/T002R150x150M000${val.album.mid}.jpg?max_age=2592000`} alt=""/>
@@ -142,7 +178,16 @@ export default class NewSongList extends Component {
         )
     }
 }
-
+const mapStateToProps = state => ({
+    playerList: state.Player.list
+});
+const mapDispatchToProps = dispatch => ({
+    addPlayerList: item => dispatch(add_player(item)),
+    player: item => dispatch(player(item)),
+    // addAudio: item => dispatch(audio_player(item)),
+    changeAudioControl: item => dispatch(audio_control(item))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(NewSongList)
 const styles = StyleSheet.create({
     rec_container: {
         position: 'relative',

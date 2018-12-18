@@ -3,10 +3,8 @@ import {StyleSheet, css}from 'aphrodite';
 import {connect} from 'react-redux';
 import {player, audio_player, audio_control, player_time, player_status, deleteItem} from '../../redux/actions';
 import Icon from 'antd/lib/icon';
-// import musicPic from '../../assets/music_bg.png';
-// import musicPic2 from '../../assets/music_bg2.png';
-import musicPic3 from '../../assets/music_bg3.png';
-import moment from 'moment';
+// import musicPic3 from '../../assets/music_bg3.png';
+// import moment from 'moment';
 import _ from 'lodash';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
@@ -18,49 +16,79 @@ class Player extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            isPlay: false,
+            isPlay: false, // 暂停和播放
             currentTime: 0,
             durationTime: 0,
-            singPic: musicPic3,
+            singPic: '//y.gtimg.cn/mediastyle/yqq/extra/player_cover.png?max_age=31536000',
             singLrc: [],
             singAuthor: null,
             singTitle: null,
             singAlbum: null,
             playList: [],
-            playIndex: 0,
+            // playIndex: 0,
             singId: '',
             progress: 0,
             showSingLrc: [],
-            singStatus: false,
-            playStatus: false
+            playStatus: false // 控制歌曲是否循环
+        }
+    }
+    componentDidMount () {
+        this.setInit();
+    }
+    componentDidUpdate (prevProps, prevState){
+        // console.log(prevProps);
+        if (this.props.playerData.player.singId !== prevProps.playerData.player.singId) { // 切换歌曲
+            this.setInit();
+        }
+        if (this.props.playerData.control !== prevProps.playerData.control) { // 控制歌曲暂停和播放
+            this.setState({
+                isPlay: this.props.playerData.control
+            })
+        }
+        if (this.props.playerData.list.length !== prevProps.playerData.list.length) { // 列表修改
+            this.setState({
+                playList: this.props.playerData.list,
+            }, () => {
+                this.changePlayerListStatus();
+            })
+        }
+        if (this.props.playerData.time !== prevProps.playerData.time) {
+            // console.log(this.props.playerData.time);
+            this.setState({
+                currentTime: this.props.playerData.time.currentTime
+            })
         }
     }
     play () {
-        this.setState({
-            isPlay: !this.state.isPlay
-        }, () => {
-            console.log(this.state.isPlay);
-            // if(this.state.isPlay) {
-            //     this.props.changeControl({
-            //         isPlay: true,
-            //     });
-            // } else {
-            //     this.props.changeControl({
-            //         isPlay: false,
-            //     })
-            // }
-        });
+        if (this.props.playerData.player.singId) { // 判断是否有音乐数据在播放
+            this.setState({
+                isPlay: !this.state.isPlay
+            }, () => {
+                console.log(this.state.isPlay);
+                if(this.state.isPlay) {
+                    this.props.changeControl({
+                        isPlay: true,
+                    });
+                } else {
+                    this.props.changeControl({
+                        isPlay: false,
+                    })
+                }
+            });
+        } else {
+            if (this.state.playList.length > 0) {
+                this.props.changePlayer(this.state.playList[0]);
+                this.props.changeControl({
+                    isPlay: true,
+                });
+            }
+        }
     }
     prevSing () {
+        if (this.state.playList.length <=0) {
+            return false;
+        }
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
-        console.log(index);
-        // this.setState({
-        //     isPlay: true
-        // });
-        // this.props.changeControl({
-        //     isPlay: true,
-        // });
-        !this.state.isPlay &&this.play();
         if (index > 0) {
             this.props.changePlayer(this.state.playList[index - 1]);
         } else {
@@ -68,9 +96,10 @@ class Player extends Component{
         }
     }
     nextSing () {
+        if (this.state.playList.length <=0) {
+            return false;
+        }
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
-        !this.state.isPlay &&this.play();
-        console.log(index);
         if (this.state.playList.length - 1 > index) {
             this.props.changePlayer(this.state.playList[index + 1]);
         } else {
@@ -78,6 +107,7 @@ class Player extends Component{
         }
     }
     startPlay (item) {
+        console.log(item);
         let  data = _.forEach(this.state.playList, (val, key) => {
             val.singId === item.singId ? val.singStatus = true : val.singStatus = false;
             return val;
@@ -89,97 +119,50 @@ class Player extends Component{
     }
     deletePlay (item) {
         console.log(item);
-        let list = this.state.playList.filter(val => val.singId !== item.singId);
-        this.setState({
-            playList: list
-        }, () => {
-            this.props.deletePlayer(item);
-        })
+        if (this.props.playerData.singId === item.singId) {
+
+        } else {
+            let list = this.state.playList.filter(val => val.singId !== item.singId);
+            this.setState({
+                playList: list
+            }, () => {
+                this.props.deletePlayer(item);
+            })
+        }
     }
     shareSong (item) {
         console.log(item);
     }
-    componentDidMount () {
-        // console.log(this.state.playList);
-        // this.formatSingLrc();
-        // this.setState({
-        //     isPlay: this.props.playerData.control.isPlay
-        // }, () => {
-        //     console.log(this.state.isPlay);
-        // })
+    changePlayerListStatus () {
+        let  data = _.forEach(this.state.playList, (val, key) => {
+            val.singId === this.state.singId ? val.singStatus = true : val.singStatus = false;
+            return val;
+        });
+        this.setState({
+            playList: data
+        })
+    }
+    setInit () {
         this.setState({
             playList: this.props.playerData.list,
             singTitle: this.props.playerData.player.singTitle,
-            singAuthor: this.props.playerData.player.singAuthor
+            singAuthor: this.props.playerData.player.singAuthor,
+            singAlbum: this.props.playerData.player.singAlbum,
+            singPic: this.props.playerData.player.singPic ? this.props.playerData.player.singPic : this.state.singPic,
+            durationTime: this.props.playerData.player.singInterval ? this.props.playerData.player.singInterval : 0,
+            singId: this.props.playerData.player.singId,
+            singLrc: this.props.playerData.player.singLrc ? this.props.playerData.player.singLrc.split('\n') : [],
+            playStatus: this.props.playerData.status,
+            isPlay: this.props.playerData.control,
+            currentTime: this.props.playerData.time.currentTime ? this.props.playerData.time.currentTime: 0
+        }, () => {
+            this.formatSingLrc();
+            this.changePlayerListStatus();
         })
     }
-    componentDidUpdate (prevProps, prevState){
-        // console.log(prevProps.playerData);
-        // console.log(this.props.playerData);
-        // if (prevProps.playerData.list.length !== this.props.playerData.list.length) {
-        //     this.setState({
-        //         playList: this.props.playerData.list
-        //     })
-        // }
-        // console.log(prevProps.playerData.list);
-        // let playerData = prevProps.playerData;
-        // if (playerData.player.singId && playerData.player.singId !== this.state.singId) {
-        //     this.formatSingLrc();
-        // }
-        // if (prevProps.playerData.control.isPlay !== this.props.playerData.control.isPlay) {
-        //     this.setState({
-        //         isPlay: this.props.playerData.control.isPlay
-        //     })
-        // }
-    }
-    static getDerivedStateFromProps(nextProps, prevState) {
-        // console.log(nextProps);
-        // let playList = nextProps.playerData.list;
-        // let reduxData = nextProps.playerData;
-        // console.log(prevState);
-        // let audio = nextProps.playerData.time;
-        // let playerData = nextProps.playerData;
-        // let currentTime = prevState.currentTime;
-        // let durationTime =  prevState.durationTime;
-        // let singPic = prevState.singPic;
-        // let singLrc = prevState.singLrc;
-        // let singAuthor = prevState.singAuthor;
-        // let singTitle = prevState.singTitle;
-        // let singId = prevState.singId;
-        // let playList = prevState.playList;
-        // if (audio.currentTime && audio.durationTime) {
-        //     currentTime = audio.currentTime ? audio.currentTime : 0;
-        //     durationTime = audio.durationTime ? audio.durationTime : 0;
-        // }
-        // if (playerData.player.singId && playerData.player.singId !== prevState.singId) {
-        //     singPic = playerData.player.singPic ? playerData.player.singPic : musicPic3;
-        //     singLrc = playerData.player.singLrc.split('\n');
-        //     singAuthor = playerData.player.singAuthor;
-        //     singTitle = playerData.player.singTitle;
-        //     singId = playerData.player.singId;
-        // }
-        // if (playerData.list.length !== playList.length) {
-        //     playerData.list.forEach(val => {
-        //         val.singId === singId ? val.playStatus = true : val.playStatus = false;
-        //     });
-        //     console.log(_.filter(playerData.list, {singId: singId}));
-        //
-        //     playList= playerData.list;
-        //     console.log(playList);
-        // }
-        // return {
-        //     currentTime: currentTime,
-        //     durationTime: durationTime,
-        //     singPic: singPic,
-        //     singLrc: singLrc,
-        //     singAuthor: singAuthor,
-        //     singTitle: singTitle,
-        //     singId: singId,
-        //     playList: playList,
-        // };
-        // console.log(this.playList);
-        return true;
-    }
+    // static getDerivedStateFromProps(nextProps, prevState) {
+    //     return true;
+    // }
     playerProgress() {
         // console.log(this.state.currentTime);
         // console.log(this.state.durationTime);
@@ -200,31 +183,28 @@ class Player extends Component{
     }
     playerSliderChange(value) {
         let currentTime = parseInt((value / 100) * this.state.durationTime);
-        let progress = (currentTime / this.state.durationTime) * 100;
-        console.log(progress);
-        console.log(currentTime);
-        this.props.playerTime(Object.assign({}, this.props.playerData.time, {
-            currentTime: currentTime
-        }))
+        let settingTime = parseInt((value / 100) * this.state.durationTime);
+        let progress = (settingTime / this.state.durationTime) * 100; // 进度条走了多少进度
+        console.log(progress + 'progress');
+        console.log(settingTime + 'settingTime');
+        this.props.playerTime({
+            currentTime: currentTime,
+            settingTime: settingTime
+        });
     }
-    playerSliderAfterChange (value) {
-
-        // console.log(value);
-        // this.setState({
-        //     progress: value
-        // })
-    }
+    playerSliderAfterChange (value) {}
     playerStatus () {
         this.setState({
             playStatus: !this.state.playStatus
         }, () => {
             console.log(this.state.playStatus);
-            // this.props.playerStatus({
-            //     status: this.state.singStatus
-            // })
+            this.props.playerStatus({
+                status: this.state.playStatus
+            })
         })
     }
     timeFormat(time) {
+        // console.log(time);
         let hour = parseInt(time / 3600);
         let min = parseInt((time / 60) % 60);
         let sec = parseInt(time % 60);
@@ -273,7 +253,7 @@ class Player extends Component{
     lrcTimeSelect () {}
     imgOnError () {
         console.log('图片出错');
-        this.playerImg.src = musicPic3;
+        this.playerImg.src = '//y.gtimg.cn/mediastyle/yqq/extra/player_cover.png?max_age=31536000';
     }
     playerImg = null;
     render () {
@@ -296,7 +276,7 @@ class Player extends Component{
                                     this.state.playList.map((val, index) => {
                                         return <li className={css(styles.list_item)} key={index}>
                                             <div className={css(styles.item_title)}>
-                                                <span>{val.singTitle} {val.singAlbum}</span>
+                                                <span className={css(styles.item_text)}>{val.singTitle} {val.singLyric}</span>
                                                 <div className={css(styles.item_control)}>
                                                     {
                                                         val.singStatus ?
@@ -326,24 +306,20 @@ class Player extends Component{
                             }
                             {
                                 this.state.singAuthor &&
-                                    <p className={css(styles.song_item)}>歌手名：{this.state.singAUthor}</p>
+                                    <p className={css(styles.song_item)}>歌手名：{this.state.singAuthor}</p>
                             }
                             {
                                 this.state.singAlbum &&
                                     <p className={css(styles.song_item)}>专辑名：{this.state.singAlbum}</p>
                             }
                         </div>
-                        {/*<ul className={css(styles.song_lrc)}>*/}
-                            {/*<li className={css(styles.lrc_item, styles.lrc_item_active)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                            {/*<li className={css(styles.lrc_item)}>告白气球</li>*/}
-                        {/*</ul>*/}
+                        <ul className={css(styles.song_lrc)}>
+                            {
+                                this.state.showSingLrc.length > 0 && this.state.showSingLrc.map((val, index) => {
+                                    return <li className={css(styles.lrc_item)} key={index}>{val.txt}</li>
+                                })
+                            }
+                        </ul>
                     </div>
                 </div>
                 <div className={css(styles.player_control)}>
@@ -362,8 +338,11 @@ class Player extends Component{
                     <div className={css(styles.player_middle)}>
                         <div className={css(styles.player_bar)}>
                             <div className={css(styles.player_subtitle)}>
-                                <span>告白气球--周杰伦</span>
-                                <div>
+                                {
+                                    this.state.singTitle && this.state.singAuthor ?
+                                    <span>{this.state.singTitle}--{this.state.singAuthor}</span> : null
+                                }
+                                <div className={css(styles.player_time)}>
                                     <span>{currentTime}</span>
                                     <span> - </span>
                                     <span>{durationTime}</span>
@@ -376,7 +355,7 @@ class Player extends Component{
                                     trackStyle={[{backgroundColor: '#e41c38'}]}
                                     railStyle={{backgroundColor: '#999393'}}
                                     // onAfterChange={this.playerSliderAfterChange.bind(this)}
-                                    // onChange={this.playerSliderChange.bind(this)}
+                                    onChange={this.playerSliderChange.bind(this)}
                                     // handleStyle={[{backgroundColor: '#31c27c'}]}
                                     // dotStyle={{backgroundColor: '#ccc'}}
                                     // activeDotStyle={{backgroundColor: '#31c27c', color: '#31c27c'}}
@@ -414,7 +393,6 @@ const styles = StyleSheet.create({
         background: `url(${musicBg}) no-repeat center center`,
         height: '100%',
         width: '100%',
-
     },
     main: {
         width: '1100px',
@@ -450,6 +428,8 @@ const styles = StyleSheet.create({
     },
     img: {
         width: '250px',
+        minHeight: '187px',
+        backgroundColor: '#999',
     },
     song_detail: {
         display: 'flex',
@@ -463,7 +443,17 @@ const styles = StyleSheet.create({
     },
     list_items: {
         height: '450px',
-        overflow: 'auto'
+        overflow: 'auto',
+        '::-webkit-scrollbar': {
+            height: '3px',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            width: '6px',
+        },
+        '::-webkit-scrollbar-thumb': {
+            background: '#31c27c',
+            borderRadius: '5px',
+        }
     },
     list_item: {
         paddingLeft: '80px',
@@ -488,8 +478,17 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center'
     },
+    item_text: {
+        width: '300px',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+    },
     item_author: {
-        width: '200px'
+        width: '200px',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
     },
     item_time: {
         width: '100px'
@@ -542,7 +541,12 @@ const styles = StyleSheet.create({
         paddingBottom: '10px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        position: 'relative'
+    },
+    player_time: {
+        position: 'absolute',
+        right: 0
     },
     player_slider: {
         width: '700px',
@@ -570,14 +574,25 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        paddingTop: '20px',
+        marginTop: '20px',
         height: '200px',
-        overflow: 'auto'
+        overflow: 'auto',
+        '::-webkit-scrollbar': {
+            height: '3px',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            width: '6px',
+        },
+        '::-webkit-scrollbar-thumb': {
+            background: '#31c27c',
+            borderRadius: '5px',
+        }
     },
     lrc_item: {
         fontSize: '16px',
         color: '#888889',
-        paddingBottom: '5px'
+        paddingBottom: '5px',
+
     },
     lrc_item_active: {
         color: '#e41c38'

@@ -52,11 +52,11 @@ export default class AlbumList extends Component {
                                 >
                                     <div className={css(styles.item_img_container)}>
                                         <img
-                                            className={css(styles.item_img)}
+                                            className={css(styles.item_img) +' item_img_active'}
                                             src={`//y.gtimg.cn/music/photo_new/T002R300x300M000${val.album_mid}.jpg?max_age=2592000`}
                                             alt=""/>
                                     </div>
-                                    <p className={css(styles.item_txt)}>{val.album_name}</p>
+                                    <p className={css(styles.item_txt, styles.item_title) + ' item_txt_active'}>{val.album_name}</p>
                                     <p className={css(styles.item_txt)}>{val.singers.map(item => {
                                         return val.singers.length > 1 ? item.singer_name + ' ' : item.singer_name
                                     })}</p>
@@ -227,23 +227,30 @@ const styles = StyleSheet.create({
     item: {
         width: '20%',
         marginBottom: '30px',
+        cursor: 'pointer',
+        ':hover .item_txt_active': {
+            color: '#31c27c'
+        },
+        ':hover .item_img_active': {
+            transform: 'scale(1.1)'
+        },
     },
     item_img_container: {
         width: '200px',
         height: '200px',
         overflow: 'hidden',
-        cursor: 'pointer',
-        marginBottom: '10px'
+        marginBottom: '10px',
     },
     item_img: {
         width: '100%',
         height: '100%',
         transition: '0.5s all',
-        ':hover': {
-            transform: 'scale(1.1)'
-        }
     },
     item_txt: {
-        paddingBottom: '10px'
+        paddingBottom: '10px',
+        color: '#999'
+    },
+    item_title: {
+        color: '#000'
     }
 });

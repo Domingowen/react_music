@@ -3,7 +3,7 @@ const initialState = {
     player: {},
     // audio: {},
     time: {},
-    control: {},
+    control: false,
     status: false,
 };
 const Player = (state = initialState, action) => {
@@ -24,51 +24,37 @@ const Player = (state = initialState, action) => {
                 }
             });
         case 'ADD_PLAYER':
+            state.list.unshift({
+                singId: action.item.singId,
+                singPic: action.item.singPic,
+                singAuthor: action.item.singAuthor,
+                singLrc: action.item.singLrc,
+                singUrl: action.item.singUrl,
+                singTitle: action.item.singTitle,
+                singInterval: action.item.singInterval,
+                singAlbum: action.item.singAlbum,
+                singLyric: action.item.singLyric
+            });
             // console.log(state.list);
             return Object.assign({}, state, {
-                list: [...state.list,
-                    {
-                        singId: action.item.singId,
-                        singPic: action.item.singPic,
-                        singAuthor: action.item.singAuthor,
-                        singLrc: action.item.singLrc,
-                        singUrl: action.item.singUrl,
-                        singTitle: action.item.singTitle,
-                        singInterval: action.item.singInterval,
-                        singAlbum: action.item.singAlbum,
-                        singLyric: action.item.singLyric
-                    }
-                ].reverse()
+                list: state.list
             });
         case 'DELETE':
             return Object.assign({}, state, {
                 list: state.list.filter(val => val.singId !== action.item.singId)
             });
         case 'AUDIO':
-            // console.log(action.item);
-            // console.log(state.list);
-            // return Object.assign({}, state, {
-            //     audio: {
-            //         singId: action.item.singId ? action.item.singId : null,
-            //         singUrl: action.item.singUrl ? action.item.singUrl : null,
-            //         // currentTime: action.item.currentTime,
-            //         // durationTime: action.item.durationTime,
-            //         playList: state.list,
-            //     }
-            // });
             break;
         case 'TIME':
             return Object.assign({}, state, {
                 time: {
                     currentTime: action.item.currentTime,
-                    durationTime: action.item.durationTime,
+                    settingTime: action.item.settingTime
                 }
             });
         case 'CONTROL':
             return Object.assign({}, state, {
-                control: {
-                    isPlay: action.item.isPlay
-                }
+                control: action.item.isPlay
             });
         case 'PLAYSTATUS':
             return Object.assign({}, state, {

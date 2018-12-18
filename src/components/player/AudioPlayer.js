@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {audio_player, player, add_player, player_time} from '../../redux/actions';
+import {player, player_time, player_status, audio_control} from '../../redux/actions';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 class AudioPlayer extends Component {
@@ -10,32 +10,36 @@ class AudioPlayer extends Component {
             singId: null,
             isLoop: false,
             isPlay: false,
-            playList: []
+            playList: [],
         };
     }
-
+    setInit () {
+        this.player.pause();
+        this.player.currentTime = 0;
+        this.props.playerTime({
+            currentTime: 0
+        });
+    }
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.playerData.player.singId !== prevProps.playerData.player.singId) {
-            // console.log(prevProps);
-            // console.log(this.props.playerData.player);
-            if (this.state.singUrl) {
-                this.player.pause();
-                this.player.currentTime = 0;
-            }
+        if (this.props.playerData.player.singId !== prevProps.playerData.player.singId) { // 切换歌曲
+            console.log(this.props.playerData.player);
             this.setState({
                 singUrl: this.props.playerData.player.singUrl,
                 singId: this.props.playerData.player.singId,
+            }, () => {
+                this.setInit();
             })
         }
-        if (this.props.playerData.list.length !== prevProps.playerData.list.length) {
-            // console.log(prevProps.playerData);
+        if (this.props.playerData.list.length !== prevProps.playerData.list.length) { // 歌曲列表变化
+            console.log(this.props.playerData.list);
             this.setState({
                 playList: this.props.playerData.list
             })
         }
-        if (this.props.playerData.control.isPlay !== prevProps.playerData.control.isPlay) {
+        if (this.props.playerData.control !== prevProps.playerData.control) { // 歌曲暂停和播放
+            console.log(this.props.playerData.control);
             this.setState({
-                isPlay: this.props.playerData.control.isPlay
+                isPlay: this.props.playerData.control
             }, () => {
                 if (this.state.isPlay) {
                     this.player.play();
@@ -44,74 +48,25 @@ class AudioPlayer extends Component {
                 }
             })
         }
-        if (this.props.playerData.status !== prevProps.playerData.status) {
-            console.log(prevProps.playerData);
-            console.log(this.props.playerData);
-            // this.player.pause();
+        if (this.props.playerData.status !== prevProps.playerData.status) { // 是否要循环播放
+            console.log(prevProps.playerData.status);
+            console.log(this.props.playerData.status);
             this.setState({
-                isLoop: !this.state.isLoop
+                isLoop: this.props.playerData.status
             });
-
         }
-        if (this.props.playerData.time.currentTime && this.player.currentTime !== this.props.playerData.time.currentTime) {
-            // this.player.pause();
-            // setTimeout(() => {
-            this.player.currentTime = this.props.playerData.time.currentTime;
-            // this.player.play();
-            // }, 0);
+        if (this.state.singUrl) { // 控制歌曲时间
+            if (this.props.playerData.time.settingTime) {
+                this.player.currentTime = this.props.playerData.time.settingTime;
+            }
         }
-        // console.log(this.props.playerData);
-        // console.log(prevState);
-        // if (prevProps.playerData.control.isPlay !== this.props.playerData.control.isPlay) {
-        //     this.setState({
-        //         isPlay: this.props.playerData.control.isPlay
-        //     }, () => {
-        //         console.log(this.state.isPlay);
-        //         if(this.state.isPlay) {
-        //             setTimeout(() => {
-        //                 this.state.singUrl && this.player.play();
-        //             }, 30)
-        //         } else {
-        //             setTimeout(() => {
-        //                 this.state.singUrl && this.player.pause();
-        //             }, 30)
-        //         }
-        //     })
-        // }
-        // if (this.props.playerData.player.singId !== prevState.singId) {
-        //     setTimeout(() => {
-        //         this.player.currentTime = 0;
-        //     }, 30)
-        // } else {
-        //     if(this.props.playerData.time.currentTime && this.player.currentTime !== this.props.playerData.time.currentTime) {
-        //         this.player.currentTime = this.props.playerData.time.currentTime
-        //     }
-        // }
-        // if (this.props.playerData.status !== this.state.isLoop) {
-        //     console.log(this.props.playerData.status);
-        //     this.setState({
-        //         isLoop: !this.state.isLoop
-        //     })
-        // }
     }
 
-    componentDidMount() {}
-
-    // static getDerivedStateFromProps(nextProps, prevState) {
-        // console.log(nextProps);
-        // console.log(prevState);
-        // if (nextProps.playerData.player.singUrl !== prevState.singUrl ||
-        //     nextProps.playerData.player.singId !== prevState.singId) {
-        //     return {
-        //         singUrl: nextProps.playerData.player.singUrl,
-        //         singId: nextProps.playerData.player.singId,
-        //     }
-        // }
-        // return {
-        //     playList: nextProps.playerData.list
-        // }
-    // }
-
+    componentDidMount() {
+        this.setState({
+            playList: this.props.playerData.list
+        })
+    }
     player = null;
 
     playerPause() {
@@ -123,11 +78,19 @@ class AudioPlayer extends Component {
     playLoadStart(e) {
     }
 
-    playDurationChange(e) {
-    }
+    playDurationChange(e) {}
 
     playCanPlay(e) {
+        //
         this.player.play();
+        this.props.audioControl({
+            isPlay: true
+        });
+        if (this.props.playerData.time.settingTime) {
+
+        } else {
+
+        }
     }
 
     playCanPlayThrough(e) {
@@ -135,8 +98,7 @@ class AudioPlayer extends Component {
 
     playTimeUpdate(e) {
         this.props.playerTime({
-            currentTime: this.player.currentTime,
-            durationTime: this.player.duration
+            currentTime: this.player.currentTime
         })
     }
 
@@ -144,20 +106,15 @@ class AudioPlayer extends Component {
         let index = _.findIndex(this.state.playList, {singId: this.state.singId});
         console.log(index);
         if (this.state.isLoop) {
-
+            this.setInit();
         } else {
-            // this.setState({
-            //     singUrl: ''
-            // }, () => {
-            //     if (this.state.playList.length - 1 > index) {
-            //         this.props.player(this.state.playList[index + 1]);
-            //     } else {
-            //         this.props.player(this.state.playList[0]);
-            //     }
-            //     // this.player.play();
-            // });
+            if (this.state.playList.length - 1 > index) {
+                this.props.player(this.state.playList[index + 1]);
+            } else {
+                // this.props.player(this.state.playList[0]);
+                this.setInit();
+            }
         }
-        // console.log('播放结束');
     };
 
     playPlaying() {
@@ -171,8 +128,7 @@ class AudioPlayer extends Component {
 
     playLoadedData(e) {
         this.props.playerTime({
-            currentTime: this.player.currentTime,
-            durationTime: this.player.duration
+            currentTime: this.player.currentTime
         })
     }
 
@@ -181,8 +137,7 @@ class AudioPlayer extends Component {
             this.state.singUrl ?
                 <audio
                     style={{display: 'none'}}
-                    // src={this.state.singUrl}
-                    // id="Audio"
+                    src={this.state.singUrl}
                     preload={'auto'}
                     onLoadStart={this.playProgress.bind(this)}
                     onDurationChange={this.playLoadStart.bind(this)}
@@ -209,6 +164,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     // addAudio: item => dispatch(audio_player(item)),
     player: item => dispatch(player(item)),
-    playerTime: item => dispatch(player_time(item))
+    playerTime: item => dispatch(player_time(item)),
+    playerStatus: item => dispatch(player_status(item)),
+    audioControl: item => dispatch(audio_control(item)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(AudioPlayer)

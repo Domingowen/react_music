@@ -29,44 +29,44 @@ export default class RangeList extends Component {
     }
     handlePlayPopularSong (val) {
         console.log(val);
-        const hide = Message.loading('正在请求音乐数据..', 0);
-        axios({
-            method: 'post',
-            url: 'http://192.168.0.131:20200/v1/music/search',
-            data: {
-                search: val.data.songmid,
-                filter: 'id',
-                type: 'qq',
-                page: 1,
-            }
-        }).then(res => {
-            console.log(res.data.data.data);
-            setTimeout(hide, 100);
-            let data = res.data.data.data[0];
-            let items = {
-                singId: data.songid,
-                singPic: data.pic,
-                singAuthor: data.author,
-                singLrc: data.lrc,
-                singUrl: data.url,
-                singTitle: data.title,
-            };
-            this.props.addPlayer(items);
-            if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-                this.props.addPlayerList(items);
-            }
-            this.props.changeControl({
-                isPlayer: true,
-            });
-            // Notification.open({
-            //     message: 'Hi',
-            //     description: `${items.singTitle} 准备播放~~`,
-            //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
-            // });
-            Message.success(`${items.singTitle}，准备播放`)
-        }).catch(err => {
-            console.log(err);
-        })
+        // const hide = Message.loading('正在请求音乐数据..', 0);
+        // axios({
+        //     method: 'post',
+        //     url: 'http://192.168.0.131:20200/v1/music/search',
+        //     data: {
+        //         search: val.data.songmid,
+        //         filter: 'id',
+        //         type: 'qq',
+        //         page: 1,
+        //     }
+        // }).then(res => {
+        //     console.log(res.data.data.data);
+        //     setTimeout(hide, 100);
+        //     let data = res.data.data.data[0];
+        //     let items = {
+        //         singId: data.songid,
+        //         singPic: data.pic,
+        //         singAuthor: data.author,
+        //         singLrc: data.lrc,
+        //         singUrl: data.url,
+        //         singTitle: data.title,
+        //     };
+        //     this.props.addPlayer(items);
+        //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+        //         this.props.addPlayerList(items);
+        //     }
+        //     this.props.changeControl({
+        //         isPlayer: true,
+        //     });
+        //     // Notification.open({
+        //     //     message: 'Hi',
+        //     //     description: `${items.singTitle} 准备播放~~`,
+        //     //     icon: <Icon type="smile" style={{ color: '#108ee9' }} />,
+        //     // });
+        //     Message.success(`${items.singTitle}，准备播放`)
+        // }).catch(err => {
+        //     console.log(err);
+        // })
     }
     render () {
         return (

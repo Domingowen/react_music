@@ -34,6 +34,7 @@ export default class DetailTitle extends Component {
                                 <p className={css(styles.title_item)}>标签：{this.state.data.tags.map(val => val.name + ' ')}</p>
                                 <p className={css(styles.title_item)}>播放量：{this.state.data.visitnum}</p>
                                 <p className={css(styles.title_item)}>简介：{this.state.data.desc}</p>
+                                <div className={css(styles.allPlay)} onClick={this.props.addAllPlay}>播放全部</div>
                             </div>
                         </div>
                     }
@@ -53,7 +54,9 @@ export default class DetailTitle extends Component {
                                 <p className={css(styles.title_item)}>标签：{this.state.data.genre}</p>
                                 <p className={css(styles.title_item)}>发行时间：{this.state.data.aDate}</p>
                                 <p className={css(styles.title_item)}>简介：{this.state.data.desc}</p>
+                                <div className={css(styles.allPlay)} onClick={this.props.addAllPlay}>播放全部</div>
                             </div>
+
                         </div>
                     }
                 </div>
@@ -79,6 +82,21 @@ const styles = StyleSheet.create({
     },
     right_content: {
         paddingLeft: '30px',
+    },
+    allPlay: {
+        width: '120px',
+        height: '40px',
+        textAlign: 'center',
+        lineHeight: '40px',
+        borderRadius: '3px',
+        backgroundColor: '#31c27c',
+        color: '#fff',
+        cursor: 'pointer',
+        marginTop: '10px',
+        fontSize: '16px',
+        ':hover': {
+            opacity: '0.9'
+        }
     },
     title: {
         fontSize: '30px',

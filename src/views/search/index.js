@@ -9,7 +9,7 @@ import Message from 'antd/lib/message';
 import 'antd/lib/spin/style/index.css';
 import 'antd/lib/message/style/index.css';
 import Icon from 'antd/lib/icon';
-import Player from "../../redux/reducer/player";
+import musicBg from "../../assets/music_player_bg.jpg";
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_862212_hnqij5ewxtc.js'
 });
@@ -49,12 +49,12 @@ class Search extends Component{
         });
         let playerItem = {
             singId: item.songmid, // 音乐ID
-            singPic: `https://api.bzqll.com/music/tencent/pic?key=579621905&id=${item.songmid}`,
+            singPic: `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
             singAuthor: `${item.singer.map(val => val.name)}`,
             singLrc: lrc,
             singUrl: `https://api.bzqll.com/music/tencent/url?key=579621905&id=${item.songmid}&br=192`,
             singTitle: `${item.songname}`,
-            singLyric: `${item.lyric}`,
+            singLyric: `${item.lyric ? item.lyric : ''}`,
             singInterval: item.interval,
             singAlbum: item.albumname ? item.albumname : null
         };
@@ -66,34 +66,37 @@ class Search extends Component{
         Message.success(`${playerItem.singTitle}，准备播放`);
 
     }
-    // async add (item) {
-    //     let lrc = await axios({ // 获取歌词
-    //         url: 'http://192.168.0.131:20200/v1/music/music_song_lrc2',
-    //         method: 'post',
-    //         data: {
-    //             songmid: item.songmid
-    //         }
-    //     }).then(res => {
-    //         console.log(res);
-    //         return res.data.data;
-    //     }).catch(err => {
-    //         console.log(err);
-    //     });
-    //     let items = {
-    //         singId: item.songid,
-    //         singPic: item.pic,
-    //         singAuthor: item.author,
-    //         singLrc: item.lrc,
-    //         singUrl: item.url,
-    //         singTitle: item.title
-    //     };
-    //     if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
-    //         this.props.addPlayerList(items);
-    //         Message.success(`${items.singTitle}，已添加到播放列表`, 1);
-    //     } else {
-    //         Message.error(`${items.singTitle}，已在播放列表中`, 1);
-    //     }
-    // }
+    async add (item) {
+        let lrc = await axios({ // 获取歌词
+            url: 'http://192.168.0.131:20200/v1/music/music_song_lrc2',
+            method: 'post',
+            data: {
+                songmid: item.songmid
+            }
+        }).then(res => {
+            console.log(res);
+            return res.data.data;
+        }).catch(err => {
+            console.log(err);
+        });
+        let items = {
+            singId: item.songmid, // 音乐ID
+            singPic: `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg?max_age=2592000`,
+            singAuthor: `${item.singer.map(val => val.name)}`,
+            singLrc: lrc,
+            singUrl: `https://api.bzqll.com/music/tencent/url?key=579621905&id=${item.songmid}&br=192`,
+            singTitle: `${item.songname}`,
+            singLyric: `${item.lyric ? item.lyric : ''}`,
+            singInterval: item.interval,
+            singAlbum: item.albumname ? item.albumname : null
+        };
+        if (_.findIndex(this.props.playerList, {singId: items.singId}) === -1) {
+            this.props.addPlayerList(items);
+            Message.success(`${items.singTitle}，已添加到播放列表`, 1);
+        } else {
+            Message.error(`${items.singTitle}，已在播放列表中`, 1);
+        }
+    }
     getData () {
         axios({
             method: 'post',
@@ -211,7 +214,7 @@ class Search extends Component{
                                     :
                                     <IconFont type="icon-zanting8" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
                                 }
-                                <IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.play.bind(this, val)}/>
+                                <IconFont type="icon-tianjia2" className={css(styles.item_play) + ' item_play'} onClick={this.add.bind(this, val)}/>
 
                             </div>
                         </div>
@@ -236,6 +239,20 @@ export default connect(mapStateToProps, mapDispatchToProps)(Search)
 const styles = StyleSheet.create({
     container: {
         // height: '100px',
+        background: `url(${musicBg}) no-repeat center center`,
+        height: '100%',
+        width: '100%',
+        overflow: 'auto',
+        '::-webkit-scrollbar': {
+            height: '3px',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            width: '6px',
+        },
+        '::-webkit-scrollbar-thumb': {
+            background: '#31c27c',
+            borderRadius: '5px',
+        }
     },
     loading: {
         position: 'fixed',
@@ -318,9 +335,9 @@ const styles = StyleSheet.create({
         ':hover .item_play': {
             display: 'block'
         },
-        ':nth-child(2n)': {
-            backgroundColor: 'rgba(0,0,0,0.01)'
-        }
+        ':nth-child(2n + 1)': {
+            backgroundColor: '#fff9f9',
+        },
     },
     item_song: {
         width: '400px',
